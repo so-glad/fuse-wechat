@@ -1,0 +1,74 @@
+{
+  "port": 5000,
+  "path": {
+    "root": "/usr/local/app/",
+    "client": "client",
+    "resources": "resources",
+    "server": "server"
+  },
+  "databases": {
+    "SoGladPublic": {
+      "dialect": "postgres",
+      "host": "ip.glad.so",
+      "port": 5432,
+      "name": "soglad",
+      "username": "soglad",
+      "password": "soglad"
+    },
+    "SoGladWechat": {
+      "dialect": "postgres",
+      "host": "ip.glad.so",
+      "port": 5432,
+      "name": "soglad",
+      "username": "soglad",
+      "password": "soglad"
+    },
+    "redis": {
+      "host": "ip.glad.so",
+      "port": 6379,
+      "password": "redis",
+      "db": 0
+    }
+  },
+  "log4js": {
+    "cwd": "data/log",
+    "appenders": [
+      {
+        "category": "http",
+        "type": "dateFile",
+        "filename": "fuse-wechat-http.log",
+        "pattern": "-yyyy-MM-dd",
+        "alwaysIncludePattern": false
+      },
+      {
+        "category": "fuse-wechat",
+        "type": "dateFile",
+        "filename": "fuse-wechat.log",
+        "pattern": "-yyyy-MM-dd",
+        "alwaysIncludePattern": false
+      },
+      {
+        "category": "fuse-wechat-db",
+        "type": "dateFile",
+        "filename": "fuse-wechat-db.log",
+        "pattern": "-yyyy-MM-dd",
+        "alwaysIncludePattern": false
+      },
+      {
+        "category": "fuse-wechat-script",
+        "type": "dateFile",
+        "filename": "fuse-wechat-script.log",
+        "pattern": "-yyyy-MM-dd",
+        "alwaysIncludePattern": false
+      }
+    ]
+  },
+  "assetsURL": "",
+  "clubURL": "",
+  "wechat": {
+    "appid": "",
+    "appsecret": "",
+    "token": "",
+    "encodingAESKey": ""
+  }
+}

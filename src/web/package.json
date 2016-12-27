@@ -1,0 +1,22 @@
+{
+  "name": "@soglad/fuse-wechat.client",
+  "version": "0.0.1",
+  "description": "To Integrate wechat login/auth into local; A module of fusion. Client side",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.glad.so/soglad/fuse-wechat.git"
+  },
+  "keywords": ["wechat", "fusion"],
+  "author": "Palmtale",
+  "license": "MIT",
+  "dependencies": {
+    "jquery": "^3.1.1",
+    "bootstrap": "3.3.7",
+    "font-awesome": "4.6.3",
+    "hover.css": "2.0.2"
+  }
+}
