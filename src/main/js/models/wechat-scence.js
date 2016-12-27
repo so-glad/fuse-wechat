@@ -10,12 +10,12 @@
 import Sequelize from 'sequelize';
 import log4js from 'koa-log4';
 
-import schemas from "../context/schemas";
+import databases from "../context/databases";
 
-const wechatSchema = schemas.wechat,
+const databaseSoglad = databases.soglad,
     logger = log4js.getLogger("fuse-wechat-db");
 
-const WechatScene = wechatSchema.define('wechatScene', {
+const WechatScene = databaseSoglad.define('wechatScene', {
     id: {
         type: Sequelize.BIGINT.UNSIGNED,
         primaryKey: true,
@@ -54,6 +54,8 @@ const WechatScene = wechatSchema.define('wechatScene', {
         field: 'comment'
     }
 }, {
+    schema: 'wechat',
+
     tableName: 'scene',
 
     timestamps: true,

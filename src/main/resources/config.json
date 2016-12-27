@@ -7,15 +7,7 @@
     "server": "server"
   },
   "databases": {
-    "SoGladPublic": {
-      "dialect": "postgres",
-      "host": "ip.glad.so",
-      "port": 5432,
-      "name": "soglad",
-      "username": "soglad",
-      "password": "soglad"
-    },
-    "SoGladWechat": {
+    "soglad": {
       "dialect": "postgres",
       "host": "ip.glad.so",
       "port": 5432,

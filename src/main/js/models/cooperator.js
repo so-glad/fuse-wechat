@@ -9,12 +9,12 @@
 import Sequelize from 'sequelize';
 import log4js from 'koa-log4';
 
-import schemas from "../context/schemas";
+import databases from "../context/databases";
 
-const publicSchema = schemas.public,
+const databaseSoglad = databases.soglad,
     logger = log4js.getLogger("fuse-wechat-db");
 
-const Cooperator = publicSchema.define('cooperator', {
+const Cooperator = databaseSoglad.define('cooperator', {
     id: {
         type: Sequelize.BIGINT.UNSIGNED,
         primaryKey: true,
@@ -44,6 +44,8 @@ const Cooperator = publicSchema.define('cooperator', {
         field: 'comment'
     }
 }, {
+    schema: 'public',
+
     tableName: 'cooperator',
 
     timestamps: true,

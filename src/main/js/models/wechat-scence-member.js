@@ -10,14 +10,14 @@
 import Sequelize from 'sequelize';
 import log4js from 'koa-log4';
 
-import schemas from '../context/schemas';
+import databases from '../context/databases';
 import Member from './member';
 import WechatUser from './wechat-user';
 
-const wechatSchema = schemas.wechat,
+const databaseSoglad = databases.soglad,
     logger = log4js.getLogger("fuse-wechat-db");
 
-const WechatSceneMember = wechatSchema.define('wechatSceneMember', {
+const WechatSceneMember = databaseSoglad.define('wechatSceneMember', {
     openid: {
         type: Sequelize.STRING,
         primaryKey: true,
@@ -38,6 +38,8 @@ const WechatSceneMember = wechatSchema.define('wechatSceneMember', {
         field: 'enabled'
     }
 }, {
+    schema: 'wechat',
+
     tableName: 'scene_member',
 
     timestamps: true,

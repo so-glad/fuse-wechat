@@ -9,12 +9,12 @@
 import Sequelize from 'sequelize';
 import log4js from 'koa-log4';
 
-import schemas from "../context/schemas";
+import schemas from "../context/databases";
 
-const publicSchema = schemas.public,
+const databaseSoglad = schemas.soglad,
       logger = log4js.getLogger("fuse-wechat-db");
 
-const Member = publicSchema.define('member', {
+const Member = databaseSoglad.define('member', {
     id: {
         type: Sequelize.BIGINT.UNSIGNED,
         primaryKey: true,
@@ -74,6 +74,8 @@ const Member = publicSchema.define('member', {
         default: false
     }
 }, {
+    schema: 'public',
+
     tableName: 'member',
 
     timestamps: true,

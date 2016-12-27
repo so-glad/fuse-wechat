@@ -10,13 +10,13 @@
 import Sequelize from 'sequelize';
 import log4js from 'koa-log4';
 
-import schemas from '../context/schemas';
+import databases from '../context/databases';
 import Member from './member';
 
-const wechatSchema = schemas.wechat,
+const databaseSoglad = databases.soglad,
     logger = log4js.getLogger("fuse-wechat-db");
 
-const WechatUserInfo = wechatSchema.define('wechatUserInfo', {
+const WechatUserInfo = databaseSoglad.define('wechatUserInfo', {
     unionid: {
         type: Sequelize.STRING,
         primaryKey: true,
@@ -56,6 +56,8 @@ const WechatUserInfo = wechatSchema.define('wechatUserInfo', {
         field: 'language'
     }
 }, {
+    schema:'wechat',
+
     tableName: 'user_info',
 
     timestamps: true,

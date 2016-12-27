@@ -10,14 +10,14 @@
 import Sequelize from 'sequelize';
 import log4js from 'koa-log4';
 
-import schemas from '../context/schemas';
+import databases from '../context/databases';
 import Member from './member';
 import WechatUserInfo from './wechat-user-info';
 
-const wechatSchema = schemas.wechat,
+const databaseSoglad = databases.soglad,
     logger = log4js.getLogger("fuse-wechat-db");
 
-const WechatUser = wechatSchema.define('wechatUser', {
+const WechatUser = databaseSoglad.define('wechatUser', {
     openid: {
         type: Sequelize.STRING,
         primaryKey: true,
@@ -61,7 +61,9 @@ const WechatUser = wechatSchema.define('wechatUser', {
         field: 'subscribe_time'
     }
 }, {
-    tableName: 'wechat_user',
+    schema: 'wechat',
+
+    tableName: 'user',
 
     timestamps: true,
 
