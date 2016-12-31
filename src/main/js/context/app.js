@@ -18,7 +18,7 @@ import onError from 'koa-onerror';
 import convert from 'koa-convert';
 import bodyParser from 'koa-bodyparser';
 import json from 'koa-json';
-import views from 'koa-views';
+import views from 'koa-mustache';
 import statics from 'koa-static-plus';
 
 import context from './context';
@@ -41,17 +41,7 @@ app.use(statics(context.config.path.client, {
 }));
 
 // views
-app.use(views(context.config.path.views, {
-    extension: 'mustache',
-    options: {
-        partials: {
-            header: '../partials/header',
-            footer: '../partials/footer',
-            before: '../partials/before',
-            after: '../partials/after'
-        }
-    }
-}));
+app.use(views(context.config.path.views, {partialsDir: '../partials'}));
 
 // 500 error
 onError(app, {
