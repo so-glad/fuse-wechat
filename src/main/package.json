@@ -30,7 +30,6 @@
     "koa-onerror": "^3.0.1",
     "koa-router": "^7.0.0",
     "koa-views": "^5.1.2",
-    "koa-mustache": "0.0.2",
 
     "co-wechat": "^1.0.0",
     "co-wechat-api": "^2.7.1",

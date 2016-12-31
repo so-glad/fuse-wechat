@@ -9,8 +9,12 @@
 import Router from 'koa-router';
 import WechatRouter from './wechat';
 
+import IndexController from '../controllers/index';
+
+const indexController = new IndexController();
 const router =  new Router();
-router.get('/', async (ctx) => {await ctx.render('index', {}) });
+
+router.get('/', async (ctx) => await indexController.index(ctx));
 router.use(WechatRouter.routes());
 
 export default router;

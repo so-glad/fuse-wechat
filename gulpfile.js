@@ -11,7 +11,6 @@ const fs = require('fs'),
 
     gulp = require('gulp'),
     clean = require('gulp-clean'),
-    watch = require('gulp-watch'),
     eslint = require('gulp-eslint'),
     babel = require('gulp-babel'),
     uglify = require('gulp-uglify'),
@@ -42,8 +41,7 @@ gulp.task('clean', () => {
 });
 
 gulp.task('develop', () => {
-    return watch('src/main/js/**/*.js', { ignoreInitial: false })
-        .pipe(gulp.start('server'));
+    return gulp.watch('src/main/js/**/*.js', ['server']);
 });
 
 gulp.task('lint', () => {

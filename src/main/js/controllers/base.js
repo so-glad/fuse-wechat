@@ -8,21 +8,27 @@
 
 class BaseController {
 
-    get context() {
-        return this._context;
-    };
+    constructor(){
 
-    set context(context) {
-        this._context = context;
     }
 
-    ctx(context){
-        this._context = context;
-        return this;
-    }
-
-    constructor(ctx){
-        this._context = ctx;
+    get view() {
+        let thisObject = {
+            partials: {
+                header: "../partials/header",
+                footer: "../partials/footer",
+                before: "../partials/before",
+                after:  "../partials/after"
+            },
+            extend: (object) => {
+                let properties = Object.keys(object);
+                for(let i = 0; i < properties.length; i++){
+                    thisObject[properties[i]] = object[properties[i]];
+                }
+                return thisObject;
+            }
+        };
+        return thisObject;
     }
 }
 
