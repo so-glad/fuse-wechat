@@ -11,6 +11,8 @@ import Sequelize from 'sequelize';
 import log4js from 'koa-log4';
 
 import databases from '../context/databases';
+import context from '../context/context';
+
 import Member from './member';
 import WechatUserInfo from './wechat-user-info';
 
@@ -56,6 +58,10 @@ const WechatUser = databaseSoglad.define('wechatUser', {
         type: Sequelize.STRING,
         field: 'groupid'
     },
+    subscribed: {
+        type: Sequelize.BOOLEAN,
+        field: 'subscribed'
+    },
     subscribeTime: {
         type: Sequelize.DATE,
         field: 'subscribe_time'
@@ -63,7 +69,7 @@ const WechatUser = databaseSoglad.define('wechatUser', {
 }, {
     schema: 'wechat',
 
-    tableName: 'user',
+    tableName: 'user_' + context.config.wechat.account,
 
     timestamps: true,
 
@@ -81,7 +87,7 @@ WechatUser.belongsTo(WechatUserInfo, {as: 'WechatUserInfo', foreignKey: 'unionid
 
 WechatUser.sync({force: false})
     .then(() => {
-        logger.info("Create/Connect table wechat.user.");
+        logger.info("Create/Connect table wechat.user" + context.config.wechat.account);
     }).catch((e) => {
         logger.error("Error while create/connect table wechat.user, cause: " + e.message);
     }

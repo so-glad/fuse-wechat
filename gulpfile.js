@@ -42,8 +42,8 @@ gulp.task('clean', () => {
 });
 
 gulp.task('develop', () => {
-    return watch('src/web/css/**/*.css', { ignoreInitial: false })
-        .pipe(gulp.dest('dest/client/css'));
+    return watch('src/main/js/**/*.js', { ignoreInitial: false })
+        .pipe(gulp.start('server'));
 });
 
 gulp.task('lint', () => {

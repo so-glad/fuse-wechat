@@ -9,21 +9,16 @@
 
 import path from 'path';
 
-import promise from 'bluebird';
 import redis from 'redis';
 import log4js from 'koa-log4';
-import Wechat from 'wechat';
-import WechatApi from 'wechat-api';
+import Wechat from 'co-wechat';
+import WechatApi from 'co-wechat-api';
 
+import promisify from '../util/promisify';
 import config from '../../resources/config.json';
-
 
 log4js.configure(config.log4js, {cwd: config.log4js.cwd});
 const logger = log4js.getLogger('fuse-wechat');
-
-promise.promisifyAll(redis.RedisClient.prototype);
-promise.promisifyAll(redis.Multi.prototype);
-promise.promisifyAll(WechatApi.prototype);
 
 let refactorConfig = (cfg) => {
     let resultConfig = cfg;
@@ -65,8 +60,10 @@ let buildRedis = (redisConfig) => {
 };
 
 let prepareWecahtApi = (redisClient) => {
+    let redisGet = promisify(redisClient.get);
+    let redisSet = promisify(redisClient.set);
     return  new WechatApi(config.wechat.appid, config.wechat.appsecret, (callback) => {
-        return redisClient.getAsync(Context.KEY_WECHAT_ACCESSTOKEN)
+        return redisGet(Context.KEY_WECHAT_ACCESSTOKEN)
             .then((value) => {
                 callback(null, JSON.parse(value));
             }).catch((error) => {
@@ -74,7 +71,7 @@ let prepareWecahtApi = (redisClient) => {
                 callback(error, null);
             });
     }, (token, callback) => {
-        return redisClient.setAsync(Context.KEY_WECHAT_ACCESSTOKEN, JSON.stringify(token))
+        return redisSet(Context.KEY_WECHAT_ACCESSTOKEN, JSON.stringify(token))
             .then((result) => {
                 redisClient.expire(Context.KEY_WECHAT_ACCESSTOKEN, 7000);
                 callback(null, result);

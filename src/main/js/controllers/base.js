@@ -12,6 +12,15 @@ class BaseController {
         return this._context;
     };
 
+    set context(context) {
+        this._context = context;
+    }
+
+    ctx(context){
+        this._context = context;
+        return this;
+    }
+
     constructor(ctx){
         this._context = ctx;
     }

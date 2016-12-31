@@ -44,7 +44,7 @@ const Cooperator = databaseSoglad.define('cooperator', {
         field: 'comment'
     }
 }, {
-    schema: 'public',
+    schema: 'basics',
 
     tableName: 'cooperator',
 

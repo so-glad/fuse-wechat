@@ -58,6 +58,7 @@
   "assetsURL": "",
   "clubURL": "",
   "wechat": {
+    "account":"",
     "appid": "",
     "appsecret": "",
     "token": "",

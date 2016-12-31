@@ -22,20 +22,23 @@ import views from 'koa-views';
 import statics from 'koa-static-plus';
 
 import context from './context';
-
+import router from '../routes/index';
 
 const app = new KOA(),
+    _use = app.use,
     logger = log4js.getLogger('fuse-wechat');
+
+app.use = (x) => _use.call(app, convert(x));
 
 // middlewares
 app.use(log4js.koaLogger(log4js.getLogger("http"), { level: 'auto' }));
-app.use(convert(bodyParser()));
-app.use(convert(json()));
+app.use(bodyParser());
+app.use(json());
 
 // static
-app.use(convert(statics(context.config.path.client, {
+app.use(statics(context.config.path.client, {
     pathPrefix: ''
-})));
+}));
 
 // views
 app.use(views(context.config.path.views, {
@@ -64,10 +67,7 @@ app.use(async (ctx, next) => {
 });
 
 // response router
-app.use(async (ctx, next) => {
-    await require('../routes/index')
-        .routes()(ctx, next);
-});
+app.use(router.routes());
 
 // 404
 app.use(async (ctx) => {
