@@ -1,29 +1,29 @@
 {
   "port": 5000,
   "path": {
-    "root": "/usr/local/app/",
-    "client": "client",
-    "resources": "resources",
-    "server": "server"
+    "root": "/usr/local/src/git.glad.so/soglad/fuse-wechat",
+    "client": "usr",
+    "resources": "etc",
+    "server": "lib"
   },
   "databases": {
     "soglad": {
       "dialect": "postgres",
-      "host": "ip.glad.so",
+      "host": "localhost",
       "port": 5432,
       "name": "soglad",
       "username": "soglad",
       "password": "soglad"
     },
     "redis": {
-      "host": "ip.glad.so",
+      "host": "localhost",
       "port": 6379,
       "password": "redis",
       "db": 0
     }
   },
   "log4js": {
-    "cwd": "data/log",
+    "cwd": "var/log",
     "appenders": [
       {
         "category": "http",
@@ -58,10 +58,16 @@
   "assetsURL": "",
   "clubURL": "",
   "wechat": {
-    "account":"",
-    "appid": "",
-    "appsecret": "",
-    "token": "",
-    "encodingAESKey": ""
+    "account": "test",
+    "type": "svc",
+    "biz": "",
+    "sync": {
+      "user_queue": {"max": 500, "concurrency": 100},
+      "media_queue": {"max": 500, "concurrency": 100}
+    },
+    "appid": "wx6340136527ae9837",
+    "appsecret": "fdafdafeqeqrefadsava",
+    "token": "jTV58l3FojmtdJ535v8o5txT8G25fZ4v",
+    "encodingAESKey": "ySYPYe4UKyESynWJYBTW1Ra7I7ck5RKNXql8pXypziZ"
   }
 }

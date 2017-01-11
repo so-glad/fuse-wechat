@@ -11,6 +11,7 @@ import Sequelize from 'sequelize';
 import log4js from 'koa-log4';
 
 import databases from '../context/databases';
+import context from '../context/context';
 import Member from './member';
 import WechatUser from './wechat-user';
 
@@ -35,12 +36,12 @@ const WechatSceneMember = databaseSoglad.define('wechatSceneMember', {
     },
     comment: {
         type: Sequelize.STRING,
-        field: 'enabled'
+        field: 'comment'
     }
 }, {
     schema: 'wechat',
 
-    tableName: 'scene_member',
+    tableName: 'scene_' + context.config.wechat.account + '_member',
 
     timestamps: true,
 
@@ -58,9 +59,9 @@ WechatSceneMember.belongsTo(WechatUser, {as: 'FollowerWechat', foreignKey: 'open
 
 WechatSceneMember.sync({force: false})
     .then(function () {
-        logger.info("Create/Connect table wechat.scene_member.");
+        logger.info("Create/Connect table wechat.scene_" + context.config.wechat.account + "_member.");
     }).catch(function (e) {
-        logger.error("Error while create/connect table wechat.scene_member, cause: " + e.message);
+        logger.error("Error while create/connect table wechat.scene_" + context.config.wechat.account + "_member, cause: " + e.message);
     }
 );
 

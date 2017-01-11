@@ -87,9 +87,9 @@ WechatUser.belongsTo(WechatUserInfo, {as: 'WechatUserInfo', foreignKey: 'unionid
 
 WechatUser.sync({force: false})
     .then(() => {
-        logger.info("Create/Connect table wechat.user" + context.config.wechat.account);
+        logger.info("Create/Connect table wechat.user_" + context.config.wechat.account);
     }).catch((e) => {
-        logger.error("Error while create/connect table wechat.user, cause: " + e.message);
+        logger.error("Error while create/connect table wechat.user_" + context.config.wechat.account + ", cause: " + e.message);
     }
 );
 

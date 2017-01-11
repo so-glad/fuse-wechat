@@ -6,10 +6,10 @@
  * @since 16/12/19.
  */
 
+import Sequelize from 'sequelize';
+import context from './context';
 
-const Sequelize = require('sequelize'),
-    databases = require('./context').config.databases;
-// logger = require('log4js').getLogger('club-wxs-db');
+const databases = context.config.databases;
 
 export default {
     soglad: new Sequelize(databases.soglad.name,

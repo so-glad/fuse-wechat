@@ -11,6 +11,7 @@ import Sequelize from 'sequelize';
 import log4js from 'koa-log4';
 
 import databases from "../context/databases";
+import context from '../context/context';
 
 const databaseSoglad = databases.soglad,
     logger = log4js.getLogger("fuse-wechat-db");
@@ -56,7 +57,7 @@ const WechatScene = databaseSoglad.define('wechatScene', {
 }, {
     schema: 'wechat',
 
-    tableName: 'scene',
+    tableName: 'scene_' + context.config.wechat.account,
 
     timestamps: true,
 
@@ -71,9 +72,9 @@ const WechatScene = databaseSoglad.define('wechatScene', {
 
 WechatScene.sync({force: false})
     .then(() => {
-        logger.info("Create/Connect table wechat.scene.");
+        logger.info("Create/Connect table wechat.scene_" + context.config.wechat.account + " .");
     }).catch((e) => {
-        logger.error("Error while create/connect table wechat.scene, cause: " + e.message);
+        logger.error("Error while create/connect table wechat.scene_" + context.config.wechat.account + ", cause: " + e.message);
     }
 );
 

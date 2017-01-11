@@ -6,9 +6,7 @@
  * @since 2016/10/16.
  */
 
-/**
- * Module import as order: system, third-party, local
- */
+/** Module import as order: system, third-party, local */
 
 import http from 'http';
 
@@ -21,7 +19,7 @@ import json from 'koa-json';
 import views from 'koa-views';
 import statics from 'koa-static-plus';
 
-import context from './context';
+import context from './container';
 import router from '../routes/index';
 
 const app = new KOA(),

@@ -9,7 +9,7 @@
 import context from '../context/context';
 import memberService from '../services/member';
 import imageService  from '../services/image';
-import wechatSceneService from '../services/wechat';
+import wechatSceneService from '../services/wechat-user';
 
 import WechatMedia from '../models/wechat-media';
 import WechatBonusStore from '../models/wechat-bonus-store';
@@ -115,8 +115,8 @@ let attachArticles = function (promise) {
 
 class WechatEventController {
 
-    constructor(){
-        this.memberService = new MemberService
+    constructor(context){
+        this.memberService = context.WechatUserService;
     }
 
     subscribe(openid) {

@@ -10,7 +10,7 @@ import Sequelize from 'sequelize';
 import log4js from 'koa-log4';
 
 import schemas from "../context/databases";
-ß
+
 const databaseSoglad = schemas.soglad,
       logger = log4js.getLogger("fuse-wechat-db");
 
@@ -19,6 +19,7 @@ const Member = databaseSoglad.define('member', {
         type: Sequelize.BIGINT.UNSIGNED,
         primaryKey: true,
         autoIncrement: false,
+        defaultValue: Sequelize.DEFAULT,
         field: 'id'
     },
     username: {

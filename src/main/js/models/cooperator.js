@@ -19,6 +19,7 @@ const Cooperator = databaseSoglad.define('cooperator', {
         type: Sequelize.BIGINT.UNSIGNED,
         primaryKey: true,
         autoIncrement: false,
+        defaultValue: Sequelize.DEFAULT,
         field: 'id'
     },
     name: {

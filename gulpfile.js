@@ -19,7 +19,9 @@ const fs = require('fs'),
     // Docker = require('gulp-docker-tasks');
 
 gulp.task('default', ['server', 'client'], () => {
-    return gulp.dest('dest/data/log');
+    /* Make directories required */
+    return gulp.src( ['README.md'])
+        .pipe(gulp.dest('dest/var/log'));
 });
 
 /**
@@ -65,8 +67,6 @@ gulp.task('lint', () => {
         .pipe(eslint.failAfterError());
 });
 
-gulp.task('test', () => {});
-
 
 gulp.task('server', [ 'dep', 'resources'], () => {
     let jsDir = 'src/main/js';
@@ -78,7 +78,31 @@ gulp.task('server', [ 'dep', 'resources'], () => {
             retainLines: true
         }))
         /*.pipe(uglify())*/
-        .pipe(gulp.dest('dest/server'));
+        .pipe(gulp.dest('dest/lib'));
+});
+
+
+gulp.task('test', () => {
+    gulp.task('test:dep', () => {
+        let pkgJson = 'src/test/package.json';
+        gulp.src(pkgJson)
+            .pipe(gulp.dest('dest/test'))
+            .pipe(install());
+
+    });
+    gulp.task('test:compile', ['test:dep'], () => {
+        let jsDir = 'src/test/js';
+        return gulp.src(subFolders(jsDir), {base: jsDir})
+            .pipe(babel({
+                presets: ["es2015-loose", "stage-3"],
+                plugins: ["add-module-exports", "transform-runtime"],
+                sourceMaps: true,
+                retainLines: true
+            }))
+            /*.pipe(uglify())*/
+            .pipe(gulp.dest('dest/test'));
+    });
+    return gulp.start('test:compile');
 });
 
 /**
@@ -87,7 +111,7 @@ gulp.task('server', [ 'dep', 'resources'], () => {
 gulp.task('dep', () => {
     let pkgJson = 'src/main/package.json';
     return gulp.src(pkgJson)
-        .pipe(gulp.dest('dest/server'))
+        .pipe(gulp.dest('dest/lib'))
         .pipe(install());
 });
 
@@ -97,7 +121,7 @@ gulp.task('dep', () => {
 gulp.task('resources', () => {
     let hbsDir = 'src/main/resources/';
     return gulp.src(subFolders(hbsDir), {base: hbsDir})
-        .pipe(gulp.dest('dest/resources'));
+        .pipe(gulp.dest('dest/etc'));
 });
 
 gulp.task('client', ['lib'], () => {
@@ -121,7 +145,7 @@ gulp.task('lib', () => {
             const path = libKeysDir[key];
             return gulp.src(subFolders(nodeModuleDir + path), {base: nodeModuleDir + path})
             /*.pipe(filter(["!.npmignore", "!bower.json", "!package.json", "README.md"]))*/
-                .pipe(gulp.dest('dest/client/lib/' + key));
+                .pipe(gulp.dest('dest/usr/lib/' + key));
         });
     });
     return gulp.start('lib:move');

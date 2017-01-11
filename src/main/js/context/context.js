@@ -15,7 +15,8 @@ import Wechat from 'co-wechat';
 import WechatApi from 'co-wechat-api';
 
 import promisify from '../util/promisify';
-import config from '../../resources/config.json';
+import config from '../../etc/config.json';
+
 
 log4js.configure(config.log4js, {cwd: config.log4js.cwd});
 const logger = log4js.getLogger('fuse-wechat');
@@ -100,6 +101,16 @@ class Context {
         this.wechat = new Wechat(this.config.wechat);
 
         this.wechatApi = prepareWecahtApi(this.redisClient);
+
+        this.container = {};
+    }
+
+    register(name, module) {
+        this.container[name] = module;
+    }
+
+    module(name) {
+        return this.container[name];
     }
 
 }

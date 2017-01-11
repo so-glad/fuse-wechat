@@ -8,13 +8,11 @@
 import log4js from 'koa-log4';
 import Router from 'koa-router';
 
-import context from '../context/context';
-
-import WechatController from '../controllers/wechat';
+import context from '../context/container';
 
 const logger = log4js.getLogger('fuse-wechat');
 const router = new Router({prefix: '/wechat'});
-const wechatController = new WechatController();
+const wechatController = context.module('controller.wechat');
 
 router.all('/', context.wechat.middleware(function* () {
     let message = this.weixin;

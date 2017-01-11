@@ -19,8 +19,10 @@
     "babel-polyfill": "^6.16.0",
 
     "mustache": "^2.3.0",
+    "pg": "^6.1.2",
     "sequelize": "^3.27.0",
     "redis": "^2.6.3",
+    "mongoose": "^4.7.6",
     "koa": "^2.0.0",
     "koa-log4": "^2.1.0",
     "koa-static-plus": "^0.1.1",
@@ -31,6 +33,7 @@
     "koa-router": "^7.0.0",
     "koa-views": "^5.1.2",
 
+    "promise-queue": "^2.2.3",
     "co-wechat": "^1.0.0",
     "co-wechat-api": "^2.7.1",
     "co-wechat-oauth": "^1.0.1"

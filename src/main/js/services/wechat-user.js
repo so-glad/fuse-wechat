@@ -6,19 +6,18 @@
  * @since 2016/12/29.
  */
 
-import context from '../context/context';
 import promisify from '../util/promisify';
+import log4js from 'koa-log4';
 
 import Member from '../models/member';
 import WechatUser from '../models/wechat-user';
 import WechatUserInfo from '../models/wechat-user-info';
-import WechatScene from '../models/wechat-scence';
-import WechatBonusStore from '../models/wechat-bonus-store';
 
+const logger = log4js.getLogger('fuse-wechat');
 
-export default class WechatSceneService {
+export default class WechatUserService {
 
-    constructor(){
+    constructor(context){
         //This kind of private member variables did private.
         this.wechatApi = context.wechatApi;
         this.wechatApi.createLimitQRCodeAsync = promisify(this.wechatApi.createLimitQRCode);
@@ -116,48 +115,5 @@ export default class WechatSceneService {
                 wechatUser.memberId = wechatUserInfo.memberId;
                 return WechatUser.findOrCreate({where: {openid: wechatUserInfo.openid}, defaults: wechatUser});
             }).then(() => savedWechatUserInfo);
-    }
-
-    findUserSceneTask(openid) {
-        let wechatScene = null;
-        return WechatScene.findOrCreate({where: {type: 'Openid', sceneString: openid}})
-            .spread((clubS, created) => {
-                if (created) {
-                    wechatScene = clubS;
-                    return Promise.all([WechatBonusStore.create({openid: openid}),
-                        this.createLimitQRCode(openid)]);
-                } else {
-                    return wechatScene = clubS;
-                }
-            }).then((result) => {
-                if (result != null && result.constructor == Array) {
-                    let scene = result[1];
-                    wechatScene.ticket = scene.ticket;
-                    wechatScene.url = scene.url;
-                    wechatScene.expiredSeconds = scene.expire_seconds;
-                    return wechatScene.save();
-                }
-                return wechatScene;
-            });
-    }
-
-    syncUserInfoByOpenidsTask(openidArray, syncUserQueue) {
-        if (openidArray == null
-            || openidArray.constructor.name != "Array"
-            || openidArray.length > 100) {
-            return null;
-        }
-
-        return this.wechatApi.batchGetUsersAsync(openidArray)
-            .then((userInfoArray) => {
-                if (userInfoArray == null || userInfoArray.user_info_list == null
-                    || userInfoArray.user_info_list.constructor.name != "Array"
-                    || userInfoArray.user_info_list.length == 0) {
-                    return null;
-                }
-                for (let i =0 ; i< userInfoArray.user_info_list.length; i++) {
-                    syncUserQueue.push(this.syncUserInfoTask, [userInfoArray.user_info_list[i]]);
-                }
-            });
     }
 }
