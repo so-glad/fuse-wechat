@@ -10,8 +10,8 @@
 import Sequelize from 'sequelize';
 import log4js from 'koa-log4';
 
+import context from '../context/config';
 import databases from "../context/databases";
-import context from '../context/context';
 
 const databaseSoglad = databases.soglad,
     logger = log4js.getLogger("fuse-wechat-db");

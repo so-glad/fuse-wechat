@@ -8,7 +8,7 @@
 
 import program from 'commander';
 
-import context from '../context/container';
+import context from '../context/config';
 
 const wechatUserQueue = context.module('queue.wechat.user');
 const wechatMediaQueue = context.module('queue.wechat.media');

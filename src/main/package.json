@@ -14,15 +14,13 @@
   "author": "Palmtale",
   "license": "MIT",
   "dependencies": {
-    "co": "^4.6.0",
     "lodash": "^4.17.2",
     "babel-polyfill": "^6.16.0",
 
-    "mustache": "^2.3.0",
     "pg": "^6.1.2",
     "sequelize": "^3.27.0",
     "redis": "^2.6.3",
-    "mongoose": "^4.7.6",
+    "mustache": "^2.3.0",
     "koa": "^2.0.0",
     "koa-log4": "^2.1.0",
     "koa-static-plus": "^0.1.1",
@@ -35,7 +33,7 @@
 
     "promise-queue": "^2.2.3",
     "co-wechat": "^1.0.0",
-    "co-wechat-api": "^2.7.1",
-    "co-wechat-oauth": "^1.0.1"
+    "wechat-api": "^1.32.0",
+    "wechat-oauth": "^1.2.1"
   }
 }

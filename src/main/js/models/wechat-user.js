@@ -10,8 +10,9 @@
 import Sequelize from 'sequelize';
 import log4js from 'koa-log4';
 
+import context from '../context/config';
 import databases from '../context/databases';
-import context from '../context/context';
+
 
 import Member from './member';
 import WechatUserInfo from './wechat-user-info';

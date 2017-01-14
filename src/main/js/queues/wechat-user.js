@@ -8,7 +8,9 @@
 import Queue from 'promise-queue';
 import log4js from 'koa-log4';
 
-import promisefy from '../util/promisify';
+import Promisefy from '../util/promisify';
+
+
 const logger = log4js.getLogger('fuse-wechat');
 
 
@@ -37,10 +39,15 @@ export default class WechatUserQueue {
 
         this._sync = (fromOpenid, gottenCount) => {
             let followerResult = null, totalCount = 0;
-            const getFollowersAsync = promisefy(this.wechatApi.getFollowers);
-
-            return getFollowersAsync(fromOpenid)
-                .then((result) => {
+            return new Promise((resolve, reject) => {
+                this.wechatApi.getFollowers(fromOpenid, (err, result) => {
+                    if(err) {
+                        reject(err);
+                    } else {
+                        resolve(result);
+                    }
+                });
+            }).then((result) => {
                     followerResult = result;
                     totalCount = result.total;
                     gottenCount = gottenCount + result.count;

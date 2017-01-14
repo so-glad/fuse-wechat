@@ -7,7 +7,7 @@
  */
 
 import Sequelize from 'sequelize';
-import context from './context';
+import context from './config';
 
 const databases = context.config.databases;
 

@@ -2,117 +2,71 @@
 'use strict';
 
 /**
- * The application initializer/context, init the used instance into some container
  * @author palmtale
- * @since 16/12/19.
+ * @since 2017/1/12.
  */
 
-import path from 'path';
-
-import redis from 'redis';
 import log4js from 'koa-log4';
+import redis from 'redis';
+
 import Wechat from 'co-wechat';
-import WechatApi from 'co-wechat-api';
+import WechatApi from 'wechat-api';
 
-import promisify from '../util/promisify';
-import config from '../../etc/config.json';
+import context from './config';
+import Promisify from '../util/promisify';
 
+import WechatUserService from '../services/wechat-user';
+import WechatMediaService from '../services/wechat-media';
+import WechatSceneService from '../services/wechat-scene';
 
-log4js.configure(config.log4js, {cwd: config.log4js.cwd});
+import WechatController from '../controllers/wechat';
+import WechatUserQueue from '../queues/wechat-user';
+import WechatMediaQueue from '../queues/wechat-media';
+
 const logger = log4js.getLogger('fuse-wechat');
-
-let refactorConfig = (cfg) => {
-    let resultConfig = cfg;
-    if (!cfg.path.root) {
-        resultConfig.path.root = path.join(__dirname, '../../..');
-    }
-
-    if(process.platform == 'windows') {
-        if(resultConfig.path.client.indexOf(':\\') !== 1 ) {
-            resultConfig.path.client = path.join(resultConfig.path.root, resultConfig.path.client);
-        }
-        if(resultConfig.path.server.indexOf(':\\') !== 1 ) {
-            resultConfig.path.server = path.join(resultConfig.path.root, resultConfig.path.server);
-        }
-        if(resultConfig.path.resources.indexOf(':\\') !== 1 ) {
-            resultConfig.path.resources = path.join(resultConfig.path.root, resultConfig.path.resources);
-        }
-    } else {
-        if(resultConfig.path.client.indexOf('/') !== 0 ) {
-            resultConfig.path.client = path.join(resultConfig.path.root, resultConfig.path.client);
-        }
-        if(resultConfig.path.server.indexOf('/') !== 0 ) {
-            resultConfig.path.server = path.join(resultConfig.path.root, resultConfig.path.server);
-        }
-        if(resultConfig.path.resources.indexOf('/') !== 0 ) {
-            resultConfig.path.resources = path.join(resultConfig.path.root, resultConfig.path.resources);
-        }
-    }
-    resultConfig.path.views = path.join(resultConfig.path.resources, 'views');
-    return resultConfig;
-};
 
 let buildRedis = (redisConfig) => {
     const redisClient = redis.createClient(redisConfig);
     redisClient.on("error", (error) => {
         logger.error("Redis error, caused by: " + error);
     });
+    Promisify.promisefy(redisClient, redisClient.get);
+    Promisify.promisefy(redisClient, redisClient.set);
     return redisClient;
 };
 
 let prepareWecahtApi = (redisClient) => {
-    let redisGet = promisify(redisClient.get);
-    let redisSet = promisify(redisClient.set);
-    return  new WechatApi(config.wechat.appid, config.wechat.appsecret, (callback) => {
-        return redisGet(Context.KEY_WECHAT_ACCESSTOKEN)
-            .then((value) => {
-                callback(null, JSON.parse(value));
-            }).catch((error) => {
-                logger.error("Get access token from redis error, caused by: " + error);
-                callback(error, null);
+    return  new WechatApi(context.config.wechat.appid, context.config.wechat.appsecret, (callback) => {
+        redisClient.getAsync(Context.KEY_WECHAT_ACCESSTOKEN)
+            .then((r) => {
+                callback(null, JSON.parse(r));
+            }).catch((e) => {
+                logger.error("Got access token on redis error, caused by: " + e.stack);
+                callback(e, null);
             });
     }, (token, callback) => {
-        return redisSet(Context.KEY_WECHAT_ACCESSTOKEN, JSON.stringify(token))
-            .then((result) => {
+        redisClient.setAsync(Context.KEY_WECHAT_ACCESSTOKEN, JSON.stringify(token))
+            .then((r) => {
                 redisClient.expire(Context.KEY_WECHAT_ACCESSTOKEN, 7000);
-                callback(null, result);
-            }).catch((error) => {
-                logger.error("Save access token on redis error, caused by: " + error);
-                callback(error, null);
+                callback(null, r);
+            }).catch((e) => {
+                logger.error("Save access token on redis error, caused by: " + e.stack);
+                callback(e, null);
             });
-    });
+        });
 };
 
-class Context {
+context.register('client.redis', buildRedis(context.config.databases.redis) );
+context.register('client.wechat.platform', new Wechat(context.config.wechat));
+context.register('client.wechat', prepareWecahtApi(context.module('client.redis')));
 
-    /**
-     * @return {string}
-     */
-    static get KEY_WECHAT_ACCESSTOKEN() {
-        return 'wechat_access_token';
-    }
+context.register('service.wechat.user', new WechatUserService(context));
+context.register('service.wechat.media', new WechatMediaService(context));
+context.register('service.wechat.scene', new WechatSceneService(context));
 
-    constructor(cfg){
+context.register('controller.wechat', new WechatController(context));
 
-        this.config = refactorConfig(cfg);
+context.register('queue.wechat.user', new WechatUserQueue(context));
+context.register('queue.wechat.media', new WechatMediaQueue(context));
 
-        this.redisClient = buildRedis(this.config.databases.redis);
-
-        this.wechat = new Wechat(this.config.wechat);
-
-        this.wechatApi = prepareWecahtApi(this.redisClient);
-
-        this.container = {};
-    }
-
-    register(name, module) {
-        this.container[name] = module;
-    }
-
-    module(name) {
-        return this.container[name];
-    }
-
-}
-
-export default new Context(config);
+export default context;

@@ -8,13 +8,13 @@
 import log4js from 'koa-log4';
 import Router from 'koa-router';
 
-import context from '../context/container';
+import context from '../context/context';
 
 const logger = log4js.getLogger('fuse-wechat');
 const router = new Router({prefix: '/wechat'});
 const wechatController = context.module('controller.wechat');
 
-router.all('/', context.wechat.middleware(function* () {
+router.all('/', context.module('client.wechat.platform').middleware(function* () {
     let message = this.weixin;
     if (message.Event == "subscribe") {
         logger.info("User subscribed wechat.account[" + context.config.wechat.account +

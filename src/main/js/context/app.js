@@ -19,7 +19,7 @@ import json from 'koa-json';
 import views from 'koa-views';
 import statics from 'koa-static-plus';
 
-import context from './container';
+import context from './config';
 import router from '../routes/index';
 
 const app = new KOA(),

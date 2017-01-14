@@ -6,15 +6,12 @@
  * @since 2017/1/10.
  */
 
-import context from '../context/context';
-import promisify from '../util/promisify';
-
 import WechatMedia from '../models/wechat-media';
 
 export default class WechatMediaService {
 
-    constructor(){
-        this.wechatApi = context.wechatApi;
+    constructor(context){
+        this.wechatApi = context.module('client.wechat');
     }
 
     syncMediaTask(mediaId) {
