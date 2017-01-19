@@ -6,6 +6,8 @@
  * @since 2016/12/29.
  */
 
+let isString = (obj) => Object.prototype.toString.call(obj) === "[object String]";
+
 export default class Promisify {
 
     constructor(ctx, method) {
@@ -34,7 +36,12 @@ export default class Promisify {
      */
 
     static promisefy(ctx, method) {
-        const methodName = method.name + "Async";
+        let methodImpl = method, methodName = method.name;
+        if(isString(method)) {
+            methodImpl = ctx[method];
+            methodName = method;
+        }
+        methodName = methodName + "Async";
         ctx[methodName] = function() {
             const args = Array.prototype.slice.call(arguments);
             return new Promise((resolve, reject) => {
@@ -45,7 +52,7 @@ export default class Promisify {
                         resolve(result);
                     }
                 });
-                method.apply(this, args);
+                methodImpl.apply(this, args);
             });
         };
         return ctx;

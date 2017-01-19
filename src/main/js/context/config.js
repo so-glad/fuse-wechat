@@ -59,7 +59,7 @@ class Context {
     /**
      * @return {string}
      */
-    static get KEY_WECHAT_ACCESSTOKEN() {
+    get KEY_WECHAT_ACCESSTOKEN() {
         return 'wechat_access_token';
     }
 

@@ -86,7 +86,7 @@ gulp.task('test', () => {
     gulp.task('test:dep', () => {
         let pkgJson = 'src/test/package.json';
         gulp.src(pkgJson)
-            .pipe(gulp.dest('dest/test'))
+            .pipe(gulp.dest('dest/tmp'))
             .pipe(install());
 
     });
@@ -100,7 +100,7 @@ gulp.task('test', () => {
                 retainLines: true
             }))
             /*.pipe(uglify())*/
-            .pipe(gulp.dest('dest/test'));
+            .pipe(gulp.dest('dest/tmp'));
     });
     return gulp.start('test:compile');
 });

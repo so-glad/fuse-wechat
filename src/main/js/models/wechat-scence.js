@@ -61,13 +61,9 @@ const WechatScene = databaseSoglad.define('wechatScene', {
 
     timestamps: true,
 
-    createdAt: 'created_at',
+    paranoid: false,
 
-    updatedAt: 'updated_at',
-
-    deletedAt: false,
-
-    paranoid: true
+    underscored: true
 });
 
 WechatScene.sync({force: false})

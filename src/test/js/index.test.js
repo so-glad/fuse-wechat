@@ -8,8 +8,9 @@
 const should = require('should');
 
 
-describe('chif/club-wxs', function () {
-    // require('./models/member.test');
-    // require('./models/wechat-user-info.test');
-    require('./models/club-user.test');
+describe('soglad/fuse-wechat', function () {
+    require('./models/wechat-user-info.test');
+    require('./queues/media.test');
+    require('./queues/user.test');
+    require('./util/promisefy.test');
 });

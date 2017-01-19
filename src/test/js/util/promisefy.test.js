@@ -76,7 +76,7 @@ describe('soglad/fuse-wechat/util/promisify', () => {
         it('Should set key correctly', (done) => {
             redisClient.setAsync(redisDefine.key, redisDefine.value)
                 .then((r) => {
-                    redisClient.expire(redisDefine.key, redisDefine.timeout);
+                    redisClient.pexpire(redisDefine.key, redisDefine.timeout);
                     done();
                 })
                 .catch((e) => {

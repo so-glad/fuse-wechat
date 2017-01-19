@@ -1,3 +1,4 @@
+
 'use strict';
 
 /**
@@ -18,10 +19,13 @@ export default class WechatUserQueue {
 
     constructor(context) {
         this.batchNumber = 100;
-        this.wechatApi = context.wechatApi;
+        this.wechatApi = context.module('client.wechat');
         this.wechatUserService = context.module('service.wechat.user');
         this.wechatUserSyncQueue = new Queue(context.config.wechat.sync.user_queue.concurrency,
             context.config.wechat.sync.user_queue.max);
+
+        Promisefy.promisefy(this.wechatApi, "getFollowers");
+        Promisefy.promisefy(this.wechatApi, "batchGetUsers");
 
         this.groupTasks = (opids) => {
             let tasks = [], openids = [], count = 0;
@@ -38,23 +42,16 @@ export default class WechatUserQueue {
         };
 
         this._sync = (fromOpenid, gottenCount) => {
-            let followerResult = null, totalCount = 0;
-            return new Promise((resolve, reject) => {
-                this.wechatApi.getFollowers(fromOpenid, (err, result) => {
-                    if(err) {
-                        reject(err);
-                    } else {
-                        resolve(result);
-                    }
-                });
-            }).then((result) => {
-                    followerResult = result;
-                    totalCount = result.total;
-                    gottenCount = gottenCount + result.count;
+            let group = null;
+            let getFollowersPromise = fromOpenid ? this.wechatApi.getFollowersAsync(fromOpenid) :
+                this.wechatApi.getFollowersAsync();
+            return getFollowersPromise
+                .then((result) => {
+                    group = result;
                     return this.groupTasks(result.data.openid);
                 }).then((results) => {
-                    if (totalCount > gottenCount) {
-                        return this._sync(followerResult.next_openid, gottenCount);
+                    if (group.total > gottenCount + group.count) {
+                        return this._sync(group.next_openid, gottenCount + group.count);
                     } else {
                         logger.info("Sync all subscriber from wechat successfully.");
                         return results;
@@ -75,8 +72,8 @@ export default class WechatUserQueue {
             || openidArray.length > 100) {
             return null;
         }
-        const batchGetUsersAsync = promisefy(this.wechatApi.batchGetUsers);
-        return batchGetUsersAsync(openidArray)
+
+        return this.wechatApi.batchGetUsersAsync(openidArray)
             .then((userInfoArray) => {
                 if (userInfoArray == null || userInfoArray.user_info_list == null
                     || userInfoArray.user_info_list.constructor.name != "Array"

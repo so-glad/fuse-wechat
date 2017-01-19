@@ -74,13 +74,9 @@ const WechatUser = databaseSoglad.define('wechatUser', {
 
     timestamps: true,
 
-    createdAt: 'created_at',
+    paranoid: false,
 
-    updatedAt: 'updated_at',
-
-    deletedAt: false,
-
-    paranoid: true
+    underscored: true
 });
 
 WechatUser.belongsTo(Member, {as: 'Member', foreignKey: 'member_id'});

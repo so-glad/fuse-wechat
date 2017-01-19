@@ -58,13 +58,9 @@ const WechatMedia = databaseSoglad.define('wechatMedia', {
 
     timestamps: true,
 
-    createdAt: 'created_at',
+    paranoid: false,
 
-    updatedAt: 'updated_at',
-
-    deletedAt: false,
-
-    paranoid: true
+    underscored: true
 });
 
 

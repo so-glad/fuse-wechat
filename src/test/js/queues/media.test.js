@@ -6,9 +6,10 @@
  */
 
 import Promisify from '../../../main/js/util/promisify';
-describe('soglad/fuse-wechat', () => {
-    describe('queue/wechat-user', () => {
-        const wechatUserQueue = context.module('queue.wechat.user');
-        return wechatUserQueue.sync(null);
+
+describe('queues/wechat-media', () => {
+    describe('sync', () => {
+        const wechatMediaQueue = context.module('queue.wechat.media');
+        return wechatMediaQueue.sync(null);
     });
 });

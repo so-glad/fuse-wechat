@@ -37,7 +37,7 @@ let buildRedis = (redisConfig) => {
 
 let prepareWecahtApi = (redisClient) => {
     return  new WechatApi(context.config.wechat.appid, context.config.wechat.appsecret, (callback) => {
-        redisClient.getAsync(Context.KEY_WECHAT_ACCESSTOKEN)
+        redisClient.getAsync(context.KEY_WECHAT_ACCESSTOKEN)
             .then((r) => {
                 callback(null, JSON.parse(r));
             }).catch((e) => {
@@ -45,9 +45,9 @@ let prepareWecahtApi = (redisClient) => {
                 callback(e, null);
             });
     }, (token, callback) => {
-        redisClient.setAsync(Context.KEY_WECHAT_ACCESSTOKEN, JSON.stringify(token))
+        redisClient.setAsync(context.KEY_WECHAT_ACCESSTOKEN, JSON.stringify(token))
             .then((r) => {
-                redisClient.expire(Context.KEY_WECHAT_ACCESSTOKEN, 7000);
+                redisClient.expire(context.KEY_WECHAT_ACCESSTOKEN, 7000);
                 callback(null, r);
             }).catch((e) => {
                 logger.error("Save access token on redis error, caused by: " + e.stack);

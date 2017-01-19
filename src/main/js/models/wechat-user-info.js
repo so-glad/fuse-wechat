@@ -1,4 +1,3 @@
-
 'use strict';
 
 /**
@@ -56,19 +55,15 @@ const WechatUserInfo = databaseSoglad.define('wechatUserInfo', {
         field: 'language'
     }
 }, {
-    schema:'wechat',
+    schema: 'wechat',
 
     tableName: 'user_info',
 
     timestamps: true,
 
-    createdAt: 'created_at',
+    paranoid: false,
 
-    updatedAt: 'updated_at',
-
-    deletedAt: false,
-
-    paranoid: true
+    underscored: true
 });
 
 WechatUserInfo.belongsTo(Member, {as: 'Member', foreignKey: 'member_id'});

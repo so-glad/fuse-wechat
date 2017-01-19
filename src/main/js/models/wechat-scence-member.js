@@ -45,13 +45,9 @@ const WechatSceneMember = databaseSoglad.define('wechatSceneMember', {
 
     timestamps: true,
 
-    createdAt: 'timestamp',
+    paranoid: false,
 
-    updatedAt: false,
-
-    deletedAt: false,
-
-    paranoid: false
+    underscored: true,
 });
 
 WechatSceneMember.belongsTo(Member, {as: 'Follower', foreignKey: 'member_id'});
