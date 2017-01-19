@@ -1,4 +1,3 @@
-
 'use strict';
 
 /**
@@ -57,7 +56,7 @@ export default class WechatUserQueue {
                         return results;
                     }
                 }).catch((exception) => {
-                    logger.error("Sync all subscriber from wechat error, caused by " + exception.track)
+                    logger.error("Sync all subscriber from wechat error, caused by " + exception.stack)
                 });
         };
     }
@@ -81,12 +80,15 @@ export default class WechatUserQueue {
                     return null;
                 }
                 for (let i = 0; i < userInfoArray.user_info_list.length; i++) {
+                    let userInfo = userInfoArray.user_info_list[i];
                     this.wechatUserSyncQueue.add(() => {
-                        return this.wechatUserService.syncUserInfoTask(userInfoArray.user_info_list[i])
+                        return this.wechatUserService.syncUserInfoTask(userInfo)
                     }).then((data) => {
-                        logger.info("Sync Member Completely,  id|" + data.memberId + ", unionid|" + data.unionid + ".");
+                        logger.info("Sync Member Completely,  id|" + data.memberId +
+                            ", unionid|" + data.unionid + ", openid|" + userInfo.openid);
                     }).catch((e) => {
-                        logger.error("Sync Member Failed. Cause:" + e.stack);
+                        logger.error("Sync Member Failed, unionid|" + userInfo.unionid +
+                            ", openid|" + userInfo.openid + ", Cause: " + e.stack + "");
                     });
                 }
             });

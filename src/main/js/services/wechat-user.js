@@ -100,7 +100,7 @@ export default class WechatUserService {
                     return foundWechatUserInfo;
                 }
             }).then((object) => {
-                if (object.Model.name != 'user_info') {
+                if (object.Model.name != 'wechatUserInfo') {
                     logger.warn('Member created,  id|' + object.id + ', unionid|' + wechatUserInfo.unionid);
                     let userInfo = this.toUserInfo(wechatUserInfo);
                     userInfo.memberId = object.id;
@@ -109,10 +109,10 @@ export default class WechatUserService {
                     object = this.mergeUserInfo(object, wechatUserInfo);
                     return object.save();
                 }
-            }).then((wechatUserInfo) => {
-                savedWechatUserInfo = wechatUserInfo;
+            }).then((foundWechatUserInfo) => {
+                savedWechatUserInfo = foundWechatUserInfo;
                 let wechatUser = this.toWechatUser(wechatUserInfo);
-                wechatUser.memberId = wechatUserInfo.memberId;
+                wechatUser.memberId = foundWechatUserInfo.memberId;
                 return WechatUser.findOrCreate({where: {openid: wechatUserInfo.openid}, defaults: wechatUser});
             }).then(() => savedWechatUserInfo);
     }
