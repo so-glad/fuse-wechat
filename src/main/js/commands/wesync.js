@@ -10,8 +10,8 @@ import program from 'commander';
 
 import context from '../context/context';
 
-const wechatUserQueue = context.module('queue.wechat.user');
-const wechatMediaQueue = context.module('queue.wechat.media');
+const wechatUserTask = context.module('task.wechat.user');
+const wechatMediaTask = context.module('task.wechat.media');
 
 program.version('0.0.1')
     .option('-u --users <user>', 'Sync User entities', /^(all|medium|small)$/i, 'all')
@@ -20,8 +20,10 @@ program.version('0.0.1')
 
 if(program.users){
     if(program.users == 'all'){
-        console.log(program.users);
-        wechatUserQueue.sync(null);
+        wechatUserTask.sync(null);
+    }
+} else if(program.media){
+    if(program.media == 'all'){
+        wechatMediaTask.sync(null);
     }
 }
-

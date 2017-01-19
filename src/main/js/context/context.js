@@ -20,8 +20,8 @@ import WechatMediaService from '../services/wechat-media';
 import WechatSceneService from '../services/wechat-scene';
 
 import WechatController from '../controllers/wechat';
-import WechatUserQueue from '../queues/wechat-user';
-import WechatMediaQueue from '../queues/wechat-media';
+import WechatUserTask from '../tasks/wechat-user';
+import WechatMediaTask from '../tasks/wechat-media';
 
 const logger = log4js.getLogger('fuse-wechat');
 
@@ -66,7 +66,7 @@ context.register('service.wechat.scene', new WechatSceneService(context));
 
 context.register('controller.wechat', new WechatController(context));
 
-context.register('queue.wechat.user', new WechatUserQueue(context));
-context.register('queue.wechat.media', new WechatMediaQueue(context));
+context.register('task.wechat.user', new WechatUserTask(context));
+context.register('task.wechat.media', new WechatMediaTask(context));
 
 export default context;

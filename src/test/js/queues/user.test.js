@@ -9,9 +9,9 @@
 import should from 'should';
 import context from '../../../main/js/context/config';
 
-describe('queues/wechat-user', () => {
+describe('tasks/wechat-user', () => {
     describe('sync', () => {
-        const wechatUserQueue = context.module('queue.wechat.user');
+        const wechatUserQueue = context.module('task.wechat.user');
         return wechatUserQueue.sync(null);
     });
 });

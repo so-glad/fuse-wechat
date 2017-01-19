@@ -31,7 +31,6 @@
     "koa-router": "^7.0.0",
     "koa-views": "^5.1.2",
 
-    "promise-queue": "^2.2.3",
     "co-wechat": "^1.0.0",
     "wechat-api": "^1.32.0",
     "wechat-oauth": "^1.2.1"
