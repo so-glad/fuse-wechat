@@ -7,10 +7,9 @@
 
 import log4js from 'koa-log4';
 
-import Promisefy from '../util/promisify';
 import Queue from '../util/promise-queue';
 
-const logger = log4js.getLogger('fuse-wechat');
+const logger = log4js.getLogger('fuse-wechat-script');
 
 
 export default class WechatUserTask {
@@ -20,9 +19,6 @@ export default class WechatUserTask {
         this.wechatApi = context.module('client.wechat');
         this.wechatUserService = context.module('service.wechat.user');
         this.wechatUserSyncQueue = new Queue(context.config.wechat.sync.user_queue.concurrency);
-
-        Promisefy.promisefy(this.wechatApi, "getFollowers");
-        Promisefy.promisefy(this.wechatApi, "batchGetUsers");
 
         this.groupTasks = (opids) => {
             let tasks = [], openids = [], count = 0;

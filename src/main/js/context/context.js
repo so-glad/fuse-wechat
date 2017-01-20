@@ -36,7 +36,7 @@ let buildRedis = (redisConfig) => {
 };
 
 let prepareWecahtApi = (redisClient) => {
-    return  new WechatApi(context.config.wechat.appid, context.config.wechat.appsecret, (callback) => {
+    let wechatApi = new WechatApi(context.config.wechat.appid, context.config.wechat.appsecret, (callback) => {
         redisClient.getAsync(context.KEY_WECHAT_ACCESSTOKEN)
             .then((r) => {
                 callback(null, JSON.parse(r));
@@ -54,6 +54,12 @@ let prepareWecahtApi = (redisClient) => {
                 callback(e, null);
             });
         });
+    Promisify.promisefy(wechatApi, 'getFollowers');
+    Promisify.promisefy(wechatApi, 'batchGetUsers');
+    Promisify.promisefy(wechatApi, 'getMaterial');
+    Promisify.promisefy(wechatApi, 'getMaterials');
+    Promisify.promisefy(wechatApi, 'getMedia');
+    return wechatApi;
 };
 
 context.register('client.redis', buildRedis(context.config.databases.redis) );

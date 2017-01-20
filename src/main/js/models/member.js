@@ -48,6 +48,9 @@ const Member = databaseSoglad.define('member', {
         type: Sequelize.STRING,
         field: 'alias'
     },
+    avatar: {
+        type: Sequelize.STRING
+    },
     gender: {
         type: Sequelize.STRING,
         field: 'gender'

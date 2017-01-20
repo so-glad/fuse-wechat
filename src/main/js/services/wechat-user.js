@@ -27,6 +27,7 @@ export default class WechatUserService {
             return {
                 username: wechatUserInfo.unionid,
                 password: 'FromWechat',
+                avatar: wechatUserInfo.headimgurl,
                 email: wechatUserInfo.openid + "@dummy.com",
                 mobile: wechatUserInfo.unionid,//TODO some digital bits. parseInt(new Date().getTime() - Math.random()*1000) + "",
                 gender: wechatUserInfo.sex,
@@ -95,15 +96,18 @@ export default class WechatUserService {
         return WechatUserInfo.findOne({where: {unionid: wechatUserInfo.unionid}})
             .then((foundWechatUserInfo) => {
                 if (!foundWechatUserInfo) {
-                    return Member.create(this.toMember(wechatUserInfo));
+                    return Member.findOrCreate({where: {username: wechatUserInfo.unionid},
+                        defaults: this.toMember(wechatUserInfo)});
                 } else {
                     return foundWechatUserInfo;
                 }
             }).then((object) => {
-                if (object.Model.name != 'wechatUserInfo') {
-                    logger.warn('Member created,  id|' + object.id + ', unionid|' + wechatUserInfo.unionid);
+                if (object.constructor == Array) {
+                    if (object[1]) {
+                        logger.warn('Member created,  id|' + object[0].id + ', unionid|' + wechatUserInfo.unionid);
+                    }
                     let userInfo = this.toUserInfo(wechatUserInfo);
-                    userInfo.memberId = object.id;
+                    userInfo.memberId = object[0].id;
                     return WechatUserInfo.create(userInfo);
                 } else {
                     object = this.mergeUserInfo(object, wechatUserInfo);
