@@ -7,7 +7,7 @@
  */
 
 import Router from 'koa-router';
-import WechatRouter from './wechat';
+import WechatRouter from './wechat-event';
 
 import IndexController from '../controllers/index';
 

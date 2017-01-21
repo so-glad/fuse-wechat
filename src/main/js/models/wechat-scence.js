@@ -21,6 +21,7 @@ const WechatScene = databaseSoglad.define('wechatScene', {
         type: Sequelize.BIGINT.UNSIGNED,
         primaryKey: true,
         autoIncrement: false,
+        defaultValue: Sequelize.DEFAULT,
         field: 'id'
     },
     type: {

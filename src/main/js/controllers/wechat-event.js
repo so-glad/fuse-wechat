@@ -8,7 +8,7 @@
 
 import context from '../context/context';
 import memberService from '../services/member';
-import imageService  from '../services/image';
+import imageService  from '../util/image';
 import wechatSceneService from '../services/wechat-user';
 
 import WechatMedia from '../models/wechat-media';

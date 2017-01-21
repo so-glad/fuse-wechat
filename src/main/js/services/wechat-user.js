@@ -84,14 +84,14 @@ export default class WechatUserService {
             }).then((userInfo) => {
                 if (userInfo.openid) {
                     /*Since it did not hold openid in the entity of wechatuserinfo, this result is from wechat server */
-                    return this.syncUserInfoTask(userInfo);
+                    return this.saveUserInfo(userInfo);
                 } else {
                     return userInfo;
                 }
             });
     }
 
-    syncUserInfoTask(wechatUserInfo) {
+    saveUserInfo(wechatUserInfo) {
         let savedWechatUserInfo = null;
         return WechatUserInfo.findOne({where: {unionid: wechatUserInfo.unionid}})
             .then((foundWechatUserInfo) => {

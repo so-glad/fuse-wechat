@@ -76,7 +76,7 @@ export default class WechatUserTask {
                 for (let i = 0; i < userInfoArray.user_info_list.length; i++) {
                     let userInfo = userInfoArray.user_info_list[i];
                     this.wechatUserSyncQueue.add(() => {
-                        return this.wechatUserService.syncUserInfoTask(userInfo)
+                        return this.wechatUserService.saveUserInfo(userInfo)
                     }).then((data) => {
                         logger.info("Sync Member Completely,  id|" + data.memberId +
                             ", unionid|" + data.unionid + ", openid|" + userInfo.openid);

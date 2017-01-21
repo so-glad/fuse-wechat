@@ -18,12 +18,14 @@ program.version('0.0.1')
     .option('-m --media <media>', 'Sync Media entities', /^(all|)$/i, 'all')
     .parse(process.argv);
 
-if(program.users){
-    if(program.users == 'all'){
-        wechatUserTask.sync(null);
-    }
-} else if(program.media){
-    if(program.media == 'all'){
-        wechatMediaTask.sync(null);
-    }
+switch (program.users) {
+
+    case 'all': wechatUserTask.sync(null);break;
+    default: break;
+}
+
+switch (program.media){
+    case 'all': wechatMediaTask.sync(null);break;
+    default: break;
+
 }

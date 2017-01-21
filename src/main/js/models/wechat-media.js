@@ -19,6 +19,8 @@ const WechatMedia = databaseSoglad.define('wechatMedia', {
     id: {
         type: Sequelize.BIGINT.UNSIGNED,
         primaryKey: true,
+        autoIncrement: false,
+        defaultValue: Sequelize.DEFAULT,
         field: 'id'
     },
     type: {
