@@ -33,26 +33,22 @@ const WechatMedia = databaseSoglad.define('wechatMedia', {
     },
     forUsing: {
         type: Sequelize.STRING,
-        field: 'for_using',
-        unique: 'media_' + context.config.wechat.account + '_for_unique'
+        unique: 'media_' + context.config.wechat.account + '_for_unique',
+        field: 'for_using'
     },
     forId: {
         type: Sequelize.BIGINT.UNSIGNED,
-        field: 'for_id',
-        unique: 'media_' + context.config.wechat.account + '_for_unique'
-    },
-    otherId: {
-        type: Sequelize.STRING,
-        field: 'other_id'
-    },
-    content: {
-        type: Sequelize.JSON,
-        field: 'content'
+        unique: 'media_' + context.config.wechat.account + '_for_unique',
+        field: 'for_id'
     },
     comment: {
         type: Sequelize.STRING,
         field: 'comment'
-    }
+    },
+    timeRange: {
+        type: Sequelize.BIGINT.UNSIGNED,
+        field: 'time_range'
+    },
 }, {
     schema: 'wechat',
 
