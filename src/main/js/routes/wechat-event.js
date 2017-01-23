@@ -14,7 +14,7 @@ const logger = log4js.getLogger('fuse-wechat');
 const router = new Router({prefix: '/wechat'});
 const wechatController = context.module('controller.wechat');
 
-router.all('/', context.module('client.wechat.platform').middleware(function* () {
+router.all('/', context.module('server.wechat').middleware(function* () {
     let message = this.weixin;
     if (message.Event == "subscribe") {
         logger.info("User subscribed wechat.account[" + context.config.wechat.account +

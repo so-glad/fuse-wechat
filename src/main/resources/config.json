@@ -22,6 +22,9 @@
       "db": 0
     }
   },
+  "elasticsearch": {
+    "host": "localhost:9200"
+  },
   "log4js": {
     "cwd": "var/log",
     "appenders": [
@@ -50,6 +53,13 @@
         "category": "fuse-wechat-script",
         "type": "dateFile",
         "filename": "fuse-wechat-script.log",
+        "pattern": "-yyyy-MM-dd",
+        "alwaysIncludePattern": false
+      },
+      {
+        "category": "fuse-wechat-elastic",
+        "type": "dateFile",
+        "filename": "fuse-wechat-elastic.log",
         "pattern": "-yyyy-MM-dd",
         "alwaysIncludePattern": false
       }

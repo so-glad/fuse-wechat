@@ -1,4 +1,3 @@
-
 'use strict';
 
 /**
@@ -8,6 +7,7 @@
 
 import log4js from 'koa-log4';
 import redis from 'redis';
+import ElasticSearch from 'elasticsearch';
 
 import Wechat from 'co-wechat';
 import WechatApi from 'wechat-api';
@@ -23,9 +23,10 @@ import WechatController from '../controllers/wechat';
 import WechatUserTask from '../tasks/wechat-user';
 import WechatMediaTask from '../tasks/wechat-media';
 
-const logger = log4js.getLogger('fuse-wechat');
 
-let buildRedis = (redisConfig) => {
+let logger = log4js.getLogger('fuse-wechat');
+
+let buildRedisClient = (redisConfig) => {
     const redisClient = redis.createClient(redisConfig);
     redisClient.on("error", (error) => {
         logger.error("Redis error, caused by: " + error);
@@ -35,25 +36,25 @@ let buildRedis = (redisConfig) => {
     return redisClient;
 };
 
-let prepareWecahtApi = (redisClient) => {
+let buildWechatClient = (redisClient) => {
     let wechatApi = new WechatApi(context.config.wechat.appid, context.config.wechat.appsecret, (callback) => {
         redisClient.getAsync(context.KEY_WECHAT_ACCESSTOKEN)
             .then((r) => {
                 callback(null, JSON.parse(r));
             }).catch((e) => {
-                logger.error("Got access token on redis error, caused by: " + e.stack);
-                callback(e, null);
-            });
+            logger.error("Got access token on redis error, caused by: " + e.stack);
+            callback(e, null);
+        });
     }, (token, callback) => {
         redisClient.setAsync(context.KEY_WECHAT_ACCESSTOKEN, JSON.stringify(token))
             .then((r) => {
                 redisClient.expire(context.KEY_WECHAT_ACCESSTOKEN, 7000);
                 callback(null, r);
             }).catch((e) => {
-                logger.error("Save access token on redis error, caused by: " + e.stack);
-                callback(e, null);
-            });
+            logger.error("Save access token on redis error, caused by: " + e.stack);
+            callback(e, null);
         });
+    });
     Promisify.promisefy(wechatApi, 'getFollowers');
     Promisify.promisefy(wechatApi, 'batchGetUsers');
     Promisify.promisefy(wechatApi, 'getMaterial');
@@ -62,13 +63,28 @@ let prepareWecahtApi = (redisClient) => {
     return wechatApi;
 };
 
-context.register('client.redis', buildRedis(context.config.databases.redis) );
-context.register('client.wechat.platform', new Wechat(context.config.wechat));
-context.register('client.wechat', prepareWecahtApi(context.module('client.redis')));
+let buildElasticSearchClient = (config) => {
+    let elasticConfig = config;
+    elasticConfig.log = (config) => {
+        return log4js.getLogger('fuse-wechat-elastic');
+    };
+    return new ElasticSearch.Client(elasticConfig);
+};
+
+let redisClient = buildRedisClient(context.config.databases.redis);
+
+
+context.register('client.redis', redisClient);
+context.register('client.elasticsearch', buildElasticSearchClient(context.config.elasticsearch));
+context.register('client.wechat', buildWechatClient(redisClient));
+
 
 context.register('service.wechat.user', new WechatUserService(context));
 context.register('service.wechat.media', new WechatMediaService(context));
 context.register('service.wechat.scene', new WechatSceneService(context));
+
+
+context.register('server.wechat', new Wechat(context.config.wechat));
 
 context.register('controller.wechat', new WechatController(context));
 

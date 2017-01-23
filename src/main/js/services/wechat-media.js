@@ -13,7 +13,9 @@ const logger = log4js.getLogger('fuse-wechat');
 export default class WechatMediaService {
 
     constructor(context) {
+        this.wechatAccount = context.config.wechat.account;
         this.wechatApi = context.module('client.wechat');
+        this.elasticSearch = context.module('client.elasticsearch');
 
         this.refactorNews = (content) => {
             if (!content) {
@@ -47,8 +49,8 @@ export default class WechatMediaService {
                 result.comment = wechatMedia.name;
             }
             if (forEntity) {
-                result.forId = forEntity.id;
-                result.forUsing = forEntity.Model.$schema + "." + forEntity.Model.tableName;
+                result.forId = forEntity.Model ? forEntity.id : forEntity._id;
+                result.forUsing = forEntity.Model ? forEntity.Model.$schema + "." + forEntity.Model.tableName: 'elasticsearch';
             }
             return result;
         };
@@ -63,6 +65,14 @@ export default class WechatMediaService {
                 }
                 return savedNews;
             })
+        };
+
+        this.newsElastic = (wechatMedium) => {
+            let meta = {
+                index: 'wechat', type: this.wechatAccount + '_news', id: wechatMedium.media_id,
+                body: this.refactorNews(wechatMedium.content)
+            };
+            return this.elasticSearch.index(meta);
         };
 
         this.mediaPromise = (wechatMedium, forEntity) => {
@@ -97,7 +107,7 @@ export default class WechatMediaService {
 
     saveMedium(wechatMedium) {
         if (wechatMedium.type == "news") {
-            return this.newsPromise(wechatMedium)
+            return this.newsElastic(wechatMedium)
                 .then((savedNews) => {
                     return this.mediaPromise(wechatMedium, savedNews);
                 }).catch((e) => {
