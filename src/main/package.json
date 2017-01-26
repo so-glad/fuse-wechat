@@ -16,7 +16,8 @@
   "dependencies": {
     "lodash": "^4.17.2",
     "babel-polyfill": "^6.16.0",
-
+    "fetch": "1.1.0",
+    "gm": "^1.23.0",
     "pg": "^6.1.2",
     "sequelize": "^3.27.0",
     "redis": "^2.6.3",

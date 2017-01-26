@@ -1,4 +1,3 @@
-
 'use strict';
 
 /**
@@ -13,7 +12,7 @@ import wechatSceneService from '../services/wechat-user';
 
 import WechatMedia from '../models/wechat-media';
 import WechatBonusStore from '../models/wechat-bonus-store';
-import WechatSceneMember from '../models/wechat-scene-member';
+import WechatSceneMember from '../models/wechat-scence-member';
 
 let createMemberScene = function (openid) {
     let wechatScene = null;
@@ -59,7 +58,8 @@ let attachArticles = function (promise) {
         var venueInfoIds = venueInfosId(venueInfos);
         if (memberVIP) {
             return VenueVIP.findAll({
-                where: {discount: {$notIn:['-1','0']},
+                where: {
+                    discount: {$notIn: ['-1', '0']},
                     venueInfoId: {$in: venueInfoIds}, $or: [
                         {ruleCodes: memberVIP.ruleCode}, {ruleCodes: {$like: memberVIP.ruleCode + ',%'}},
                         {ruleCodes: {$like: '%,' + memberVIP.ruleCode}},
@@ -70,7 +70,7 @@ let attachArticles = function (promise) {
             return VenueDiscount.findAll({where: {venueInfoId: {$in: venueInfoIds}}});
         }
     }).then(function (venueDiscounts) {
-        if (!venueDiscounts||venueDiscounts.length == 0) {
+        if (!venueDiscounts || venueDiscounts.length == 0) {
             return null;
         } else if (memberVIP && venueDiscounts.length < venueInfos.length) {
             var noVIPVenueInfoIds = [];
@@ -97,7 +97,7 @@ let attachArticles = function (promise) {
         for (var i = 0; i < venueInfos.length; i++) {
             var vi = venueInfos[i];
             var vd = getVenueInfoDiscount(vi.id, venueDiscounts);
-            if(vd.discount == 0){
+            if (vd.discount == 0) {
                 vd.discountInfo = "礼遇";
             } else {
                 vd.discountInfo = ((100.00 - vd.discount) / 10.00) + vd.pattern;
@@ -113,10 +113,33 @@ let attachArticles = function (promise) {
     });
 };
 
-class WechatEventController {
+export default class WechatEventController {
 
-    constructor(context){
-        this.memberService = context.WechatUserService;
+    constructor(context) {
+        this.memberService = context.module('service.member');
+        this.wechatNewsService = context.module('service.wechat.news');
+
+        this.transform = (savedFormList) => {
+            if(!savedFormList || savedFormList.constructor != Array) {
+                return savedFormList;
+            }
+            let result = [];
+            for(let i = 0; i < (savedFormList.length < 10 ?savedFormList.length : 10); i++) {
+                let savedForm = savedFormList[i];
+                result.push({
+                    title: savedForm.title,
+                    description: savedForm.digest,
+                    picurl: savedForm.thumbUrl,
+                    url: savedForm.url
+                });
+            }
+            return result;
+        }
+    }
+
+    async hear(content) {
+        let newsList = await this.wechatNewsService.findNewsItemsMatchContent(content);
+        return this.transform(newsList);
     }
 
     subscribe(openid) {
@@ -148,19 +171,19 @@ class WechatEventController {
             }).then((wechatMedia) => {
                 return context.wechatApi.sendImageAsync(openid, wechatMedia.mediaId);
             }).then(() => {
-                return WechatBonusStore.findOne({where:{openid:openid}});
+                return WechatBonusStore.findOne({where: {openid: openid}});
             }).then((wechatBonusStore) => {
                 return context.wechatApi.sendTextAsync(openid, ""
-                        + wechatBonusStore.earned + "元。");
+                    + wechatBonusStore.earned + "元。");
             });
-        }
+    }
 
     spreaded(spreader, follower, userInfo) {
         return WechatSceneMember.create({openid: follower, memberId: userInfo.memberId, sceneString: spreader})
             .then(function (clubSceneMember) {
                 return WechatBonusStore.find({where: {openid: clubSceneMember.sceneString}})
             }).then(function (clubBonusStore) {
-                if(clubBonusStore) {
+                if (clubBonusStore) {
                     clubBonusStore.earned = clubBonusStore.earned + 1.00;
                     return clubBonusStore.save();
                 } else {
@@ -176,7 +199,7 @@ class WechatEventController {
             [memberService.findMemberVIPTask(openid), venueInfoService.findKeywordsVenues(said)]
             )
         ).then(function (articles) {
-            if(articles && articles.length > 0) {
+            if (articles && articles.length > 0) {
                 return articles;
             }
             return tuling.send({userid: openid, info: said})
@@ -193,6 +216,4 @@ class WechatEventController {
         );
     }//locate
 
-}
-
-export default new WechatEventController();
+};

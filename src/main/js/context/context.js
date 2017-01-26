@@ -16,10 +16,11 @@ import context from './config';
 import Promisify from '../util/promisify';
 
 import WechatUserService from '../services/wechat-user';
+import WechatNewsService from '../services/wechat-news';
 import WechatMediaService from '../services/wechat-media';
 import WechatSceneService from '../services/wechat-scene';
 
-import WechatController from '../controllers/wechat';
+import WechatEventController from '../controllers/wechat-event';
 import WechatUserTask from '../tasks/wechat-user';
 import WechatMediaTask from '../tasks/wechat-media';
 
@@ -80,13 +81,14 @@ context.register('client.wechat', buildWechatClient(redisClient));
 
 
 context.register('service.wechat.user', new WechatUserService(context));
+context.register('service.wechat.news', new WechatNewsService(context));
 context.register('service.wechat.media', new WechatMediaService(context));
 context.register('service.wechat.scene', new WechatSceneService(context));
 
 
 context.register('server.wechat', new Wechat(context.config.wechat));
 
-context.register('controller.wechat', new WechatController(context));
+context.register('controller.wechat.event', new WechatEventController(context));
 
 context.register('task.wechat.user', new WechatUserTask(context));
 context.register('task.wechat.media', new WechatMediaTask(context));
