@@ -62,11 +62,16 @@ export default class WechatNewsService {
         return this.newsElastic(news);
     }
 
-    findNewsItemsMatchContent(content) {
-        return this.elasticSearch.search({index: 'wechat', type: this.wechatAccount + '_news',
-            body: { query: { match: { content: content } } }
-        }).then((result) => {
+    async findNewsItemsMatchContent(content) {
+        try {
+            let result = await this.elasticSearch.search({
+                index: 'wechat', type: this.wechatAccount + '_news',
+                body: { query: { match: { content: content } } }
+            });
             return result.hits.hits;
-        });
+        } catch (e) {
+            logger.error('Find news from search engine error, cause: ' + e.stack);
+            return [];
+        }
     }
 }

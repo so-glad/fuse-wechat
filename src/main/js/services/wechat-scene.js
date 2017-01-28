@@ -9,7 +9,7 @@ import WechatScene from '../models/wechat-scence';
 import WechatBonusStore from '../models/wechat-bonus-store';
 
 export default class WechatSceneService {
-    findUserSceneTask(openid) {
+    findUserScene(openid) {
         let wechatScene = null;
         return WechatScene.findOrCreate({where: {type: 'Openid', sceneString: openid}})
             .spread((clubS, created) => {

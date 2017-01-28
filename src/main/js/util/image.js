@@ -10,7 +10,7 @@ import fetch from 'fetch';
 import log4js from 'koa-log4';
 import fs from 'fs';
 
-import Promise from './promisify';
+import Promisify from './promisify';
 
 const logger = log4js.getLogger("fuse-wechat");
 
@@ -21,7 +21,7 @@ const qrCodePrefix = 'data/qrCode/';
 export default class Image {
 
     constructor() {
-        Promise.promisify(fs, fs.writeFile);
+        Promisify.promisefy(fs, 'writeFile');
         this.fetchImage = (openid, url) => new Promise((resolve, reject) => {
             fetch.fetchUrl(url, {}, (error, meta, body) => {
                 if (error) {

@@ -5,215 +5,137 @@
  * @since 2016/12/19.
  */
 
-import context from '../context/context';
-import memberService from '../services/member';
-import imageService  from '../util/image';
-import wechatSceneService from '../services/wechat-user';
+import log4js from 'koa-log4';
+import ImageUtil from '../util/image';
 
 import WechatMedia from '../models/wechat-media';
 import WechatBonusStore from '../models/wechat-bonus-store';
 import WechatSceneMember from '../models/wechat-scence-member';
 
-let createMemberScene = function (openid) {
-    let wechatScene = null;
-    return Promise.all([memberService.findUserInfoByOpenidTask(openid), wechatSceneService.findUserSceneTask(openid)])
-        .then((results) => {
-            let userInfo = results[0];
-            wechatScene = results[1];
-            return imageService.makeSceneImage(openid, userInfo.headimgurl,
-                context.wechatApi.showQRCodeURL(wechatScene.ticket), userInfo.nickname);
-        }).then((path) => {
-            return context.wechatApi.uploadMediaAsync(path, 'image');
-        }).then((media) => {
-            media.clubSceneId = wechatScene.id;
-            return media;
-        });
-};
 
-let venueInfosId = function (venueInfos) {
-    var result = [];
-    for (var i = 0; i < venueInfos.length; i++) {
-        result.push(venueInfos[i].id || venueInfos[i].venueInfoId);
-    }
-    return result;
-};
-
-let getVenueInfoDiscount = function (venueInfoId, venueInfoDiscounts) {
-    for (var i = 0; i < venueInfoDiscounts.length; i++) {
-        if (venueInfoId == venueInfoDiscounts[i].venueInfoId) {
-            return venueInfoDiscounts[i];
-        }
-    }
-    return null;
-};
-
-let attachArticles = function (promise) {
-    var memberVIP = null, venueInfos = null, venueVIPs = [];
-    return promise.then(function (results) {
-        memberVIP = results[0];
-        venueInfos = results[1];
-        if (!venueInfos || venueInfos.length == 0) {
-            return null;
-        }
-        var venueInfoIds = venueInfosId(venueInfos);
-        if (memberVIP) {
-            return VenueVIP.findAll({
-                where: {
-                    discount: {$notIn: ['-1', '0']},
-                    venueInfoId: {$in: venueInfoIds}, $or: [
-                        {ruleCodes: memberVIP.ruleCode}, {ruleCodes: {$like: memberVIP.ruleCode + ',%'}},
-                        {ruleCodes: {$like: '%,' + memberVIP.ruleCode}},
-                        {ruleCodes: {$like: '%,' + memberVIP.ruleCode + ',%'}}]
-                }
-            });
-        } else {
-            return VenueDiscount.findAll({where: {venueInfoId: {$in: venueInfoIds}}});
-        }
-    }).then(function (venueDiscounts) {
-        if (!venueDiscounts || venueDiscounts.length == 0) {
-            return null;
-        } else if (memberVIP && venueDiscounts.length < venueInfos.length) {
-            var noVIPVenueInfoIds = [];
-            for (var i = 0; i < venueInfos.length; i++) {
-                if (getVenueInfoDiscount(venueInfos[i].id, venueDiscounts) == null) {
-                    noVIPVenueInfoIds.push(venueInfos[i].id);
-                }
-            }
-            venueVIPs = venueDiscounts;
-            return VenueDiscount.findAll({where: {venueInfoId: {$in: noVIPVenueInfoIds}}});
-        } else {
-            return venueDiscounts;
-        }
-    }).then(function (venueDiscounts) {
-        if (!venueDiscounts) {
-            return null;
-        }
-        var articles = [{
-            title: "Taste the best of Shanghai",
-            url: "http://m.urbem.cn/search?sort=dist",
-            picUrl: context.config.assetsURL + "/assets/img/shanghai-h-" + parseInt(1 + Math.random() * 9) + ".ps.jpg?v=1"
-        }];
-        venueDiscounts = venueDiscounts.concat(venueVIPs);
-        for (var i = 0; i < venueInfos.length; i++) {
-            var vi = venueInfos[i];
-            var vd = getVenueInfoDiscount(vi.id, venueDiscounts);
-            if (vd.discount == 0) {
-                vd.discountInfo = "礼遇";
-            } else {
-                vd.discountInfo = ((100.00 - vd.discount) / 10.00) + vd.pattern;
-            }
-            articles.push({
-                title: vi.name + (vi.alias ? " - " + vi.alias : "") + "\r\n"
-                + vd.discountInfo + " " + (vi.distance ? vi.distance : ""),
-                picUrl: context.config.clubURL + "/upload/" + vi.logoPath,
-                url: context.config.clubURL + "/venue/" + vi.id
-            });
-        }
-        return articles;
-    });
-};
+const logger = log4js.getLogger('fuse-wechat');
+const imageUtil = new ImageUtil();
 
 export default class WechatEventController {
 
     constructor(context) {
-        this.memberService = context.module('service.member');
+        this.wechatAccount = context.config.wechat.account;
+        this.wechatApi = context.module('client.wechat');
+        this.wechatUserService = context.module('service.wechat.user');
+        this.wechatSceneService = context.module('service.wechat.scene');
         this.wechatNewsService = context.module('service.wechat.news');
 
-        this.transform = (savedFormList) => {
-            if(!savedFormList || savedFormList.constructor != Array) {
-                return savedFormList;
+
+        this.createMemberScene = async(openid) => {
+            let userInfo = await this.wechatUserService.findUserInfoByOpenid(openid);
+            let wechatScene = await this.wechatSceneService.findUserScene(openid);
+            let path = await imageUtil.makeSceneImage(openid, userInfo.headimgurl,
+                this.wechatApi.showQRCodeURL(wechatScene.ticket), userInfo.nickname);
+            let media = await this.wechatApi.uploadMediaAsync(path, 'image');
+            media.clubSceneId = wechatScene.id;
+            return media;
+        };
+    }
+
+    /**
+     * @return {string}
+     */
+    static get SUBSCRIBE_REPLY() {
+        return '您好，感谢关注。';
+    }
+
+    async handle(ctx) {
+        let message = ctx.weixin;
+        /* Subscribing Event */
+        if (message.Event == "subscribe") {
+            logger.info("User subscribed wechat.account[" + this.wechatAccount +
+                "], openid[" + message.FromUserName + "].");
+            try {
+                let userInfo = await this.subscribe(message.FromUserName);
+                this.body = {type: "text", content: WechatEventController.SUBSCRIBE_REPLY};
+                if (message.EventKey.indexOf("qrscene_") === 0) {
+                    let spreadOpenid = message.EventKey.substring(8);
+                    logger.info("User.openid[" + message.FromUserName +
+                        "] spreaded by user.openid[" + spreadOpenid + "] ");
+                    await this.spreaded(spreadOpenid, message.FromUserName, userInfo);
+                }
+            } catch (e) {
+                logger.error("Subscribed error wechat.account[" + this.wechatAccount +
+                    "], openid [" + message.FromUserName + "] " + e.stack);
             }
-            let result = [];
-            for(let i = 0; i < (savedFormList.length < 10 ?savedFormList.length : 10); i++) {
-                let savedForm = savedFormList[i];
-                result.push({
-                    title: savedForm.title,
-                    description: savedForm.digest,
-                    picurl: savedForm.thumbUrl,
-                    url: savedForm.url
-                });
-            }
-            return result;
         }
+        /* Unsubscribing Event */ else if (message.Event == "unsubscribe") {
+            logger.info("User unsubscribed wechat.account[" + this.wechatAccount +
+                "], openid[" + message.FromUserName + "].");
+        }
+        /* Auto location UP event */ else if (message.Event == "LOCATION") {
+            logger.info("User opened wechat.account[" + this.wechatAccount +
+                "], openid[" + message.FromUserName + "], at location[" +
+                message.Latitude + "," + message.Longitude + "," + message.Precision + "]");
+        }
+        /* Received text/voice message */ else if (message.TYPE == 'text' || message.type == 'voice') {
+            this.body = await this.hear(message.Content || message.Recongnize);
+        }
+        /* Default Event */ else {
+            logger.info("Default come from user opened wechat.account[" + this.wechatAccount +
+                "], openid[" + message.FromUserName + "]");
+        }
+    }
+
+    async subscribe(openid) {
+        return await this.wechatUserService.findUserInfoByOpenid(openid);
+    }
+
+    async spreaded(spreader, follower, userInfo) {
+        let wechatSceneMember = await WechatSceneMember.create({
+            openid: follower,
+            memberId: userInfo.memberId,
+            sceneString: spreader
+        });
+        let wechatBonusStore = await WechatBonusStore.find({where: {openid: wechatSceneMember.sceneString}});
+        if (wechatBonusStore) {
+            wechatBonusStore.earned = wechatBonusStore.earned + 1.00;
+            await wechatBonusStore.save();
+        }
+        return await this.wechatApi.sendTextAsync(spreader, "[" + userInfo.nickname + "] 通过扫描你的二维码关注了。");
+    }
+
+    async spread(openid) {
+        let wechatMedia = await WechatMedia.findOne({where: {type: 'Image', otherId: openid, table: ''}});
+        let media = wechatMedia;
+        if (wechatMedia == null || Date.now() - wechatMedia.updated_at > 3 * 24 * 60 * 60 * 1000) {
+            media = await this.createMemberScene(openid);
+        }
+        if(wechatMedia == null) {//Case of no wechat media
+            wechatMedia = await WechatMedia.create({
+                type: 'Image', mediaId: media.media_id, otherId: openid,
+                tableId: media.clubSceneId, table: 'ubm_wechat.club_scene'
+            });
+        } else if (media.clubSceneId) { //case of expired club media
+            wechatMedia.mediaId = media.media_id;
+            wechatMedia.updated_at = Date.now();
+            wechatMedia = await wechatMedia.save();
+        }
+        await this.wechatApi.sendImageAsync(openid, wechatMedia.mediaId);
+        let wechatBonusStore = await WechatBonusStore.findOne({where: {openid: openid}});
+        await this.wechatApi.sendTextAsync(openid, "" + wechatBonusStore.earned + "元。");
     }
 
     async hear(content) {
         let newsList = await this.wechatNewsService.findNewsItemsMatchContent(content);
-        return this.transform(newsList);
-    }
-
-    subscribe(openid) {
-        return memberService.findUserInfoByOpenidTask(openid)
-    }
-
-    spread(openid) {
-        let wechatMedia = null;
-        return WechatMedia.findOne({where: {type: 'Image', otherId: openid, table: ''}})
-            .then((wechatM) => {
-                wechatMedia = wechatM;
-                if (wechatMedia == null || Date.now() - wechatMedia.updated_at > 3 * 24 * 60 * 60 * 1000) {
-                    return createMemberScene(openid);
-                } else {
-                    return wechatMedia;
-                }
-            }).then((media) => {
-                if (wechatMedia == null) {//Case of no wechat media
-                    return WechatMedia.create({
-                        type: 'Image', mediaId: media.media_id, otherId: openid,
-                        tableId: media.clubSceneId, table: 'ubm_wechat.club_scene'
-                    });
-                } else if (media.clubSceneId) { //case of expired club media
-                    wechatMedia.mediaId = media.media_id;
-                    wechatMedia.updated_at = Date.now();
-                    return wechatMedia.save();
-                }
-                return wechatMedia;//Case of existed club media.
-            }).then((wechatMedia) => {
-                return context.wechatApi.sendImageAsync(openid, wechatMedia.mediaId);
-            }).then(() => {
-                return WechatBonusStore.findOne({where: {openid: openid}});
-            }).then((wechatBonusStore) => {
-                return context.wechatApi.sendTextAsync(openid, ""
-                    + wechatBonusStore.earned + "元。");
+        if (!newsList || newsList.constructor != Array) {
+            return newsList;
+        }
+        let result = [];
+        for (let i = 0; i < (newsList.length < 10 ? newsList.length : 10); i++) {
+            let savedForm = newsList[i];
+            result.push({
+                title: savedForm.title,
+                description: savedForm.digest,
+                picurl: savedForm.thumbUrl,
+                url: savedForm.url
             });
+        }
+        return result;
     }
-
-    spreaded(spreader, follower, userInfo) {
-        return WechatSceneMember.create({openid: follower, memberId: userInfo.memberId, sceneString: spreader})
-            .then(function (clubSceneMember) {
-                return WechatBonusStore.find({where: {openid: clubSceneMember.sceneString}})
-            }).then(function (clubBonusStore) {
-                if (clubBonusStore) {
-                    clubBonusStore.earned = clubBonusStore.earned + 1.00;
-                    return clubBonusStore.save();
-                } else {
-                    return null;
-                }
-            }).then(() => {
-                return context.wechatApi.sendTextAsync(spreader, "[" + userInfo.nickname + "] 通过扫描你的二维码关注了。");
-            });
-    }
-
-    keywords(openid, said) {
-        return attachArticles(Promise.all(
-            [memberService.findMemberVIPTask(openid), venueInfoService.findKeywordsVenues(said)]
-            )
-        ).then(function (articles) {
-            if (articles && articles.length > 0) {
-                return articles;
-            }
-            return tuling.send({userid: openid, info: said})
-                .then(function (response) {
-                    return response.text;
-                });
-        });
-    }
-
-    locate(openid, x, y) {
-        return attachArticles(Promise.all(
-            [memberService.findMemberVIPTask(openid), venueInfoService.findDistanceVenuesTask(x, y)]
-            )
-        );
-    }//locate
-
 };

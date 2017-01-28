@@ -58,9 +58,14 @@ let buildWechatClient = (redisClient) => {
     });
     Promisify.promisefy(wechatApi, 'getFollowers');
     Promisify.promisefy(wechatApi, 'batchGetUsers');
+    Promisify.promisefy(wechatApi, 'createLimitQRCode');
     Promisify.promisefy(wechatApi, 'getMaterial');
     Promisify.promisefy(wechatApi, 'getMaterials');
     Promisify.promisefy(wechatApi, 'getMedia');
+    Promisify.promisefy(wechatApi, 'getUser');
+    Promisify.promisefy(wechatApi, 'sendText');
+    Promisify.promisefy(wechatApi, 'sendImage');
+    Promisify.promisefy(wechatApi, 'uploadMedia');
     return wechatApi;
 };
 

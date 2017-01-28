@@ -5,8 +5,6 @@
  * @author palmtale
  * @since 2016/12/29.
  */
-
-import Promisify from '../util/promisify';
 import log4js from 'koa-log4';
 
 import Member from '../models/member';
@@ -20,8 +18,6 @@ export default class WechatUserService {
     constructor(context){
         //This kind of private member variables did private.
         this.wechatApi = context.module('client.wechat');
-        Promisify.promisefy(this.wechatApi, this.wechatApi.createLimitQRCode);
-        Promisify.promisefy(this.wechatApi, this.wechatApi.batchGetUsers);
 
         this.toMember = (wechatUserInfo) => {
             return {
@@ -71,7 +67,7 @@ export default class WechatUserService {
         };
     }
 
-    findUserInfoByOpenidTask(openid) {
+    findUserInfoByOpenid(openid) {
         return WechatUser.findOne({where: {openid: openid}})
             .then((wechatUser) => {
                 if (wechatUser) {
@@ -79,7 +75,7 @@ export default class WechatUserService {
                     return wechatUser.getWechatUserInfo();
                 } else {
                     /* Get wechat user info through wechat API*/
-                    return Promisify.promisefy(wechatApi, wechatApi.getUser)(openid);
+                    return this.wechatApi.getUserAsync(openid);
                 }
             }).then((userInfo) => {
                 if (userInfo.openid) {
