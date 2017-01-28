@@ -58,9 +58,9 @@ const Cooperator = databaseSoglad.define('cooperator', {
 
 Cooperator.sync({force: false})
     .then(() => {
-        logger.info("Create/Connect table public.cooperator.");
+        logger.info("Create/Connect table basics.cooperator.");
     }).catch((e) => {
-        logger.error("Error while create/connect table public.cooperator, cause: " + e.message);
+        logger.error("Error while create/connect table basics.cooperator, cause: " + e.message);
     }
 );
 

@@ -41,7 +41,7 @@ const WechatSceneMember = databaseSoglad.define('wechatSceneMember', {
 }, {
     schema: 'wechat',
 
-    tableName: 'scene_' + context.config.wechat.account + '_member',
+    tableName: 'scene_member_' + context.config.wechat.account,
 
     timestamps: true,
 
@@ -55,9 +55,9 @@ WechatSceneMember.belongsTo(WechatUser, {as: 'FollowerWechat', foreignKey: 'open
 
 WechatSceneMember.sync({force: false})
     .then(function () {
-        logger.info("Create/Connect table wechat.scene_" + context.config.wechat.account + "_member.");
+        logger.info("Create/Connect table wechat.scene_member_" + context.config.wechat.account + ".");
     }).catch(function (e) {
-        logger.error("Error while create/connect table wechat.scene_" + context.config.wechat.account + "_member, cause: " + e.message);
+        logger.error("Error while create/connect table wechat.scene_member_" + context.config.wechat.account + ", cause: " + e.message);
     }
 );
 

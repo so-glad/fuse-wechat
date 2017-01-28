@@ -92,9 +92,9 @@ const Member = databaseSoglad.define('member', {
 
 Member.sync({force: false})
     .then(() => {
-        logger.info("Create/Connect table public.member.");
+        logger.info("Create/Connect table basics.member.");
     }).catch((e) => {
-        logger.error("Error while create/connect table public.member, cause: " + e.message);
+        logger.error("Error while create/connect table basics.member, cause: " + e.message);
     }
 );
 

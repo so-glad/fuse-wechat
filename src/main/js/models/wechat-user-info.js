@@ -70,9 +70,9 @@ WechatUserInfo.belongsTo(Member, {as: 'Member', foreignKey: 'member_id'});
 
 WechatUserInfo.sync({force: false})
     .then(() => {
-        logger.info("Create/Connect table wechat.userInfo.");
+        logger.info("Create/Connect table wechat.user_info.");
     }).catch((e) => {
-        logger.error("Error while create/connect table wechat.userInfo, cause: " + e.message);
+        logger.error("Error while create/connect table wechat.user_info, cause: " + e.message);
     }
 );
 
