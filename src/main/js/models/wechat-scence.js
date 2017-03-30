@@ -58,7 +58,7 @@ const WechatScene = databaseSoglad.define('wechatScene', {
 }, {
     schema: 'wechat',
 
-    tableName: 'scene_' + context.config.wechat.account,
+    tableName: context.config.wechat.account + '_scene' ,
 
     timestamps: true,
 
@@ -69,9 +69,9 @@ const WechatScene = databaseSoglad.define('wechatScene', {
 
 WechatScene.sync({force: false})
     .then(() => {
-        logger.info("Create/Connect table wechat.scene_" + context.config.wechat.account + " .");
+        logger.info("Create/Connect table wechat." + context.config.wechat.account + "_scene .");
     }).catch((e) => {
-        logger.error("Error while create/connect table wechat.scene_" + context.config.wechat.account + ", cause: " + e.message);
+        logger.error("Error while create/connect table wechat." + context.config.wechat.account + "_scene, cause: " + e.message);
     }
 );
 

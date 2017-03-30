@@ -7,7 +7,7 @@
  */
 import log4js from 'koa-log4';
 
-import Member from '../models/member';
+import Member from '../models/user';
 import WechatUser from '../models/wechat-user';
 import WechatUserInfo from '../models/wechat-user-info';
 
@@ -27,7 +27,8 @@ export default class WechatUserService {
                 email: wechatUserInfo.openid + "@dummy.com",
                 mobile: wechatUserInfo.unionid,//TODO some digital bits. parseInt(new Date().getTime() - Math.random()*1000) + "",
                 gender: wechatUserInfo.sex,
-                alias: wechatUserInfo.nickname
+                alias: wechatUserInfo.nickname,
+                role_id: 1
             };
         };
 
@@ -100,7 +101,7 @@ export default class WechatUserService {
             }).then((object) => {
                 if (object.constructor == Array) {
                     if (object[1]) {
-                        logger.warn('Member created,  id|' + object[0].id + ', unionid|' + wechatUserInfo.unionid);
+                        logger.warn('User created,  id|' + object[0].id + ', unionid|' + wechatUserInfo.unionid);
                     }
                     let userInfo = this.toUserInfo(wechatUserInfo);
                     userInfo.memberId = object[0].id;

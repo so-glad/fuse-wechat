@@ -7,8 +7,6 @@
  */
 
 import BaseController from './base';
-import Member from '../models/member';
-import Cooperator from '../models/cooperator';
 
 export default class IndexController extends BaseController {
 

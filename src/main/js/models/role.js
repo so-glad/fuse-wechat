@@ -1,9 +1,8 @@
-
 'use strict';
 
 /**
  * @author palmtale
- * @since 2016/12/27.
+ * @since 2017/3/30.
  */
 
 import Sequelize from 'sequelize';
@@ -14,7 +13,7 @@ import databases from "../context/databases";
 const databaseSoglad = databases.soglad,
     logger = log4js.getLogger("fuse-wechat-db");
 
-const Cooperator = databaseSoglad.define('cooperator', {
+const Role = databaseSoglad.define('role', {
     id: {
         type: Sequelize.BIGINT.UNSIGNED,
         primaryKey: true,
@@ -24,30 +23,24 @@ const Cooperator = databaseSoglad.define('cooperator', {
     },
     name: {
         type: Sequelize.STRING,
-        field: 'name',
-        unique: true
+        field: 'name'
     },
     code: {
         type: Sequelize.STRING,
-        field: 'code',
-        unique: true
+        field: 'code'
     },
-    address: {
-        type: Sequelize.STRING,
-        field: 'address'
-    },
-    phone: {
-        type: Sequelize.STRING,
-        field: 'phone'
+    enabled: {
+        type: Sequelize.BOOLEAN,
+        field: 'enabled'
     },
     comment: {
         type: Sequelize.STRING,
         field: 'comment'
     }
 }, {
-    schema: 'basics',
+    schema: 'common',
 
-    tableName: 'cooperator',
+    tableName: 'role',
 
     timestamps: true,
 
@@ -56,12 +49,12 @@ const Cooperator = databaseSoglad.define('cooperator', {
     underscored: true
 });
 
-Cooperator.sync({force: false})
+Role.sync({force: false})
     .then(() => {
-        logger.info("Create/Connect table basics.cooperator.");
+        logger.info("Create/Connect table common.role.");
     }).catch((e) => {
-        logger.error("Error while create/connect table basics.cooperator, cause: " + e.message);
+        logger.error("Error while create/connect table common.role, cause: " + e.message);
     }
 );
 
-export default Cooperator;
+export default Role;

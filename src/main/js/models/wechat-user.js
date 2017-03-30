@@ -14,7 +14,7 @@ import context from '../context/config';
 import databases from '../context/databases';
 
 
-import Member from './member';
+import Member from './user';
 import WechatUserInfo from './wechat-user-info';
 
 const databaseSoglad = databases.soglad,
@@ -70,7 +70,7 @@ const WechatUser = databaseSoglad.define('wechatUser', {
 }, {
     schema: 'wechat',
 
-    tableName: 'user_' + context.config.wechat.account,
+    tableName: context.config.wechat.account + '_user',
 
     timestamps: true,
 
@@ -79,14 +79,14 @@ const WechatUser = databaseSoglad.define('wechatUser', {
     underscored: true
 });
 
-WechatUser.belongsTo(Member, {as: 'Member', foreignKey: 'member_id'});
+WechatUser.belongsTo(Member, {as: 'User', foreignKey: 'member_id'});
 WechatUser.belongsTo(WechatUserInfo, {as: 'WechatUserInfo', foreignKey: 'unionid'});
 
 WechatUser.sync({force: false})
     .then(() => {
-        logger.info("Create/Connect table wechat.user_" + context.config.wechat.account);
+        logger.info("Create/Connect table wechat." + context.config.wechat.account + "_user" );
     }).catch((e) => {
-        logger.error("Error while create/connect table wechat.user_" + context.config.wechat.account + ", cause: " + e.message);
+        logger.error("Error while create/connect table wechat." + context.config.wechat.account + "_user, cause: " + e.message);
     }
 );
 

@@ -6,7 +6,6 @@
  */
 
 import WechatScene from '../models/wechat-scence';
-import WechatBonusStore from '../models/wechat-bonus-store';
 
 export default class WechatSceneService {
     findUserScene(openid) {

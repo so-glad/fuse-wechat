@@ -9,7 +9,6 @@ import log4js from 'koa-log4';
 import ImageUtil from '../util/image';
 
 import WechatMedia from '../models/wechat-media';
-import WechatBonusStore from '../models/wechat-bonus-store';
 import WechatSceneMember from '../models/wechat-scence-member';
 
 

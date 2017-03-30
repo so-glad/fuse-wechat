@@ -78,10 +78,10 @@ export default class WechatUserTask {
                     this.wechatUserSyncQueue.add(() => {
                         return this.wechatUserService.saveUserInfo(userInfo)
                     }).then((data) => {
-                        logger.info("Sync Member Completely,  id|" + data.memberId +
+                        logger.info("Sync User Completely,  id|" + data.memberId +
                             ", unionid|" + data.unionid + ", openid|" + userInfo.openid);
                     }).catch((e) => {
-                        logger.error("Sync Member Failed, unionid|" + userInfo.unionid +
+                        logger.error("Sync User Failed, unionid|" + userInfo.unionid +
                             ", openid|" + userInfo.openid + ", Cause: " + e.stack + "");
                     });
                 }

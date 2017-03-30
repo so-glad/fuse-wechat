@@ -11,10 +11,12 @@ import log4js from 'koa-log4';
 
 import schemas from "../context/databases";
 
+import Role from "./role";
+
 const databaseSoglad = schemas.soglad,
       logger = log4js.getLogger("fuse-wechat-db");
 
-const Member = databaseSoglad.define('member', {
+const User = databaseSoglad.define('user', {
     id: {
         type: Sequelize.BIGINT.UNSIGNED,
         primaryKey: true,
@@ -79,9 +81,9 @@ const Member = databaseSoglad.define('member', {
         default: false
     }
 }, {
-    schema: 'basics',
+    schema: 'common',
 
-    tableName: 'member',
+    tableName: 'user',
 
     timestamps: true,
 
@@ -90,12 +92,14 @@ const Member = databaseSoglad.define('member', {
     underscored: true
 });
 
-Member.sync({force: false})
+User.belongsTo(Role, {as: 'role', foreignKey: 'user_role_id_foreign'});
+
+User.sync({force: false})
     .then(() => {
-        logger.info("Create/Connect table basics.member.");
+        logger.info("Create/Connect table common.member.");
     }).catch((e) => {
-        logger.error("Error while create/connect table basics.member, cause: " + e.message);
+        logger.error("Error while create/connect table common.member, cause: " + e.message);
     }
 );
 
-export default Member;
+export default User;

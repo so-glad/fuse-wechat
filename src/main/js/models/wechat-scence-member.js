@@ -12,7 +12,7 @@ import log4js from 'koa-log4';
 
 import databases from '../context/databases';
 import context from '../context/config';
-import Member from './member';
+import Member from './user';
 import WechatUser from './wechat-user';
 
 const databaseSoglad = databases.soglad,
@@ -41,7 +41,7 @@ const WechatSceneMember = databaseSoglad.define('wechatSceneMember', {
 }, {
     schema: 'wechat',
 
-    tableName: 'scene_member_' + context.config.wechat.account,
+    tableName: context.config.wechat.account + '_scene_member' ,
 
     timestamps: true,
 
@@ -55,9 +55,9 @@ WechatSceneMember.belongsTo(WechatUser, {as: 'FollowerWechat', foreignKey: 'open
 
 WechatSceneMember.sync({force: false})
     .then(function () {
-        logger.info("Create/Connect table wechat.scene_member_" + context.config.wechat.account + ".");
+        logger.info("Create/Connect table wechat." + context.config.wechat.account + "_scene_member.");
     }).catch(function (e) {
-        logger.error("Error while create/connect table wechat.scene_member_" + context.config.wechat.account + ", cause: " + e.message);
+        logger.error("Error while create/connect table wechat." + context.config.wechat.account + "_scene_member, cause: " + e.message);
     }
 );
 

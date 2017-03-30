@@ -52,7 +52,7 @@ const WechatMedia = databaseSoglad.define('wechatMedia', {
 }, {
     schema: 'wechat',
 
-    tableName: 'media_' + context.config.wechat.account,
+    tableName: context.config.wechat.account + '_media' ,
 
     timestamps: true,
 
@@ -64,9 +64,9 @@ const WechatMedia = databaseSoglad.define('wechatMedia', {
 
 WechatMedia.sync({force: false})
     .then(() => {
-        logger.info("Create/Connect table wechat.media_" + context.config.wechat.account + ".");
+        logger.info("Create/Connect table wechat." + context.config.wechat.account + "_media.");
     }).catch(function (e) {
-        logger.error("Error while create/connect table wechat.media_" + context.config.wechat.account + ", cause: " + e.message);
+        logger.error("Error while create/connect table wechat." + context.config.wechat.account + "_media, cause: " + e.message);
     }
 );
 

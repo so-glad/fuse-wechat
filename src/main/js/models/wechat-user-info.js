@@ -10,7 +10,7 @@ import Sequelize from 'sequelize';
 import log4js from 'koa-log4';
 
 import databases from '../context/databases';
-import Member from './member';
+import Member from './user';
 
 const databaseSoglad = databases.soglad,
     logger = log4js.getLogger("fuse-wechat-db");
@@ -66,7 +66,7 @@ const WechatUserInfo = databaseSoglad.define('wechatUserInfo', {
     underscored: true
 });
 
-WechatUserInfo.belongsTo(Member, {as: 'Member', foreignKey: 'member_id'});
+WechatUserInfo.belongsTo(Member, {as: 'User', foreignKey: 'member_id'});
 
 WechatUserInfo.sync({force: false})
     .then(() => {
