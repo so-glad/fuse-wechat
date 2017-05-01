@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -e
+
+if [ ! -f $APP_HOME/var/config.json ]; then
+    cp -r /tmp/config.json $APP_HOME/var/
+    mkdir -p $APP_HOME/var/log $APP_HOME/var/headImage $APP_HOME/var/qrCode $APP_HOME/var/scene
+fi
+
+rm -rf $APP_HOME/etc/config.json
+ln -s  $APP_HOME/var/config.json $APP_HOME/etc/config.json
+
+node $APP_HOME/lib/index.js --production

@@ -15,7 +15,6 @@
   "license": "MIT",
   "dependencies": {
     "lodash": "^4.17.2",
-    "babel-polyfill": "^6.16.0",
     "fetch": "1.1.0",
     "commander": "2.9.0",
     "gm": "^1.23.0",
@@ -37,5 +36,8 @@
     "co-wechat": "^1.0.0",
     "wechat-api": "^1.32.0",
     "wechat-oauth": "^1.2.1"
+  },
+  "devDependencies": {
+    "babel-polyfill": "^6.16.0"
   }
 }
