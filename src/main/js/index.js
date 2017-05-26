@@ -5,6 +5,6 @@
  * @author palmtale
  * @since 2016/10/16.
  */
-
-export default require('./context/app')
-// module.exports = require('./context');
+import App from './context/app';
+module.exports = App;
+export default App;

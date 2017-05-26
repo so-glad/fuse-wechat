@@ -15,9 +15,9 @@ const databaseSoglad = databases.soglad,
 
 const Role = databaseSoglad.define('role', {
     id: {
-        type: Sequelize.BIGINT.UNSIGNED,
+        type: Sequelize.BIGINT,
         primaryKey: true,
-        autoIncrement: false,
+        autoIncrement: true,
         defaultValue: Sequelize.DEFAULT,
         field: 'id'
     },

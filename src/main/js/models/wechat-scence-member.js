@@ -19,17 +19,6 @@ const databaseSoglad = databases.soglad,
     logger = log4js.getLogger("fuse-wechat-db");
 
 const WechatSceneMember = databaseSoglad.define('wechatSceneMember', {
-    openid: {
-        type: Sequelize.STRING,
-        primaryKey: true,
-        references: {model: WechatUser, key: 'openid'},
-        field: 'openid'
-    },
-    memberId: {
-        type: Sequelize.BIGINT.UNSIGNED,
-        field: 'member_id',
-        references: {model: Member, key: 'id'}
-    },
     sceneString: {
         type: Sequelize.STRING,
         field: 'scene_str'

@@ -17,9 +17,9 @@ const databaseSoglad = schemas.soglad,
 
 const WechatMedia = databaseSoglad.define('wechatMedia', {
     id: {
-        type: Sequelize.BIGINT.UNSIGNED,
+        type: Sequelize.BIGINT,
         primaryKey: true,
-        autoIncrement: false,
+        autoIncrement: true,
         defaultValue: Sequelize.DEFAULT,
         field: 'id'
     },
@@ -37,7 +37,7 @@ const WechatMedia = databaseSoglad.define('wechatMedia', {
         field: 'for_using'
     },
     forId: {
-        type: Sequelize.BIGINT.UNSIGNED,
+        type: Sequelize.STRING,
         unique: 'media_' + context.config.wechat.account + '_for_unique',
         field: 'for_id'
     },
@@ -46,7 +46,7 @@ const WechatMedia = databaseSoglad.define('wechatMedia', {
         field: 'comment'
     },
     timeRange: {
-        type: Sequelize.BIGINT.UNSIGNED,
+        type: Sequelize.BIGINT,
         field: 'time_range'
     },
 }, {

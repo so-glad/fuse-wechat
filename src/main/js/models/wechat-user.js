@@ -14,7 +14,7 @@ import context from '../context/config';
 import databases from '../context/databases';
 
 
-import Member from './user';
+import User from './user';
 import WechatUserInfo from './wechat-user-info';
 
 const databaseSoglad = databases.soglad,
@@ -25,15 +25,6 @@ const WechatUser = databaseSoglad.define('wechatUser', {
         type: Sequelize.STRING,
         primaryKey: true,
         field: 'openid'
-    },
-    memberId: {
-        type: Sequelize.BIGINT.UNSIGNED,
-        field: 'member_id',
-        references: {model: Member, key: 'id'}
-    },
-    unionid: {
-        type: Sequelize.STRING,
-        references: {model: WechatUserInfo, key: 'unionid'}
     },
     accessToken: {
         type: Sequelize.STRING,
@@ -79,7 +70,7 @@ const WechatUser = databaseSoglad.define('wechatUser', {
     underscored: true
 });
 
-WechatUser.belongsTo(Member, {as: 'User', foreignKey: 'member_id'});
+WechatUser.belongsTo(User, {as: 'User', foreignKey: 'user_id'});
 WechatUser.belongsTo(WechatUserInfo, {as: 'WechatUserInfo', foreignKey: 'unionid'});
 
 WechatUser.sync({force: false})

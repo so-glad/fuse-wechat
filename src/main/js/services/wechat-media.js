@@ -48,7 +48,7 @@ export default class WechatMediaService {
                 //     logger.warn("Found wechat media id|" + savedMedium.id + ", media_id|" + savedMedium.mediaId);
                 // }
                 return savedMedium;
-            })
+            });
         };
     }
 

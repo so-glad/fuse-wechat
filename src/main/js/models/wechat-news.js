@@ -16,7 +16,7 @@ const databaseSoglad = schemas.soglad,
 
 const WechatNews = databaseSoglad.define('wechatNews', {
     id: {
-        type: Sequelize.BIGINT.UNSIGNED,
+        type: Sequelize.BIGINT,
         primaryKey: true,
         autoIncrement: false,
         defaultValue: Sequelize.DEFAULT,

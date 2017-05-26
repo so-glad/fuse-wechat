@@ -18,9 +18,9 @@ const databaseSoglad = schemas.soglad,
 
 const User = databaseSoglad.define('user', {
     id: {
-        type: Sequelize.BIGINT.UNSIGNED,
+        type: Sequelize.BIGINT,
         primaryKey: true,
-        autoIncrement: false,
+        autoIncrement: true,
         defaultValue: Sequelize.DEFAULT,
         field: 'id'
     },

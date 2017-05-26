@@ -75,9 +75,9 @@
       "user_queue": {"max": 500, "concurrency": 100},
       "media_queue": {"max": 500, "concurrency": 100}
     },
-    "appid": "wx8b4207c0c545f6c6",
-    "appsecret": "864d66a0bb2d01515793129c3917ef1d",
-    "token": "tjNsenFdYNLdEmrkf2rfqX0CSjZJKh6u",
-    "encodingAESKey": "wGUmZuWVyC4iJq5E2kChOWeOVgkS4GVICroiHGnXGOD"
+    "appid": "wx32477262fc4490e8",
+    "appsecret": "924ec9af45a0f1330d07176c555814d0",
+    "token": "c1tytst9Wa",
+    "encodingAESKey": "KRotIL9w6nSMzNkxxejDt0GJcOcRbGiXmMDt2P3DULx"
   }
 }

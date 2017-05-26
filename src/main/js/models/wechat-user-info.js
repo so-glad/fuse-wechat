@@ -22,7 +22,7 @@ const WechatUserInfo = databaseSoglad.define('wechatUserInfo', {
         field: 'unionid'
     },
     memberId: {
-        type: Sequelize.BIGINT.UNSIGNED,
+        type: Sequelize.BIGINT,
         field: 'member_id',
         references: {model: Member, key: 'id'}
     },

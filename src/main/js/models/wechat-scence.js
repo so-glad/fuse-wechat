@@ -18,9 +18,9 @@ const databaseSoglad = databases.soglad,
 
 const WechatScene = databaseSoglad.define('wechatScene', {
     id: {
-        type: Sequelize.BIGINT.UNSIGNED,
+        type: Sequelize.BIGINT,
         primaryKey: true,
-        autoIncrement: false,
+        autoIncrement: true,
         defaultValue: Sequelize.DEFAULT,
         field: 'id'
     },
@@ -30,7 +30,7 @@ const WechatScene = databaseSoglad.define('wechatScene', {
         default: 'Openid'
     },
     modelId: {
-        type: Sequelize.BIGINT.UNSIGNED,
+        type: Sequelize.BIGINT,
         field: 'model_id',
         default: null
     },
